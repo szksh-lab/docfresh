@@ -1,7 +1,6 @@
 package run
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -9,6 +8,9 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/expr-lang/expr"
+
+	"github.com/suzuki-shunsuke/go-error-with-exit-code/ecerror"
 	"github.com/suzuki-shunsuke/slog-error/slogerr"
 )
 
@@ -42,6 +44,27 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	if err != nil {
 		return "", fmt.Errorf("execute a command: %w", err)
 	}
+	if t := block.Input.Test(); t != "" {
+		prog, err := expr.Compile(t, expr.Env(result), expr.AsBool())
+		if err != nil {
+			fmt.Fprintf(c.stderr, `[ERROR] compile an expression
+%v`, err)
+			return "", ecerror.Wrap(nil, 1)
+		}
+		output, err := expr.Run(prog, result)
+		if err != nil {
+			fmt.Fprintf(c.stderr, `[ERROR] evaluate an expression
+%v`, err)
+			return "", ecerror.Wrap(nil, 1)
+		}
+		f, ok := output.(bool)
+		if !ok {
+			return "", errors.New("the test result must be boolean")
+		}
+		if !f {
+			return "", errors.New("test failed")
+		}
+	}
 	s, err := c.render(tpl, result, block.Input.TemplateData())
 	if err != nil {
 		return "", fmt.Errorf("render template: %w", err)
@@ -64,14 +87,6 @@ func (c *Controller) runPreCommand(ctx context.Context, file string, block *Bloc
 		return err
 	}
 	return nil
-}
-
-func execTpl(tpl *template.Template, data any) (string, error) {
-	buf := &bytes.Buffer{}
-	if err := tpl.Execute(buf, data); err != nil {
-		return "", fmt.Errorf("execute a template: %w", err)
-	}
-	return buf.String(), nil
 }
 
 func (c *Controller) render(tpl *template.Template, result *TemplateInput, templateData *TemplateData) (string, error) {

@@ -319,3 +319,14 @@ file:
       name: foo
 -->
 ```
+
+### Test
+
+```md
+<!-- docfresh begin
+command:
+  command: npm test
+  test: |
+    Stdout contains "foo"
+-->
+```
