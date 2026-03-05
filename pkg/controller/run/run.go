@@ -87,12 +87,20 @@ type Block struct {
 }
 
 type BlockInput struct {
-	PreCommand  *Command  `yaml:"pre_command,omitempty"`
-	PostCommand *Command  `yaml:"post_command,omitempty"`
-	Command     *Command  `yaml:",omitempty"`
-	File        *File     `yaml:",omitempty"`
-	HTTP        *HTTP     `yaml:",omitempty"`
-	Template    *Template `yaml:",omitempty"`
+	PreCommand    *Command       `yaml:"pre_command,omitempty"`
+	PostCommand   *Command       `yaml:"post_command,omitempty"`
+	Command       *Command       `yaml:",omitempty"`
+	File          *File          `yaml:",omitempty"`
+	HTTP          *HTTP          `yaml:",omitempty"`
+	GitHubContent *GitHubContent `yaml:"github_content,omitempty"`
+	Template      *Template      `yaml:",omitempty"`
+}
+
+type GitHubContent struct {
+	Owner string
+	Repo  string
+	Ref   string
+	Path  string
 }
 
 type Template struct {
@@ -128,4 +136,8 @@ type TemplateInput struct {
 	Content string
 	// http
 	URL string
+	// github content
+	Owner string
+	Repo  string
+	Ref   string
 }

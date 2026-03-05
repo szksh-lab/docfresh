@@ -2,6 +2,7 @@
 package run
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/spf13/afero"
@@ -12,13 +13,19 @@ import (
 type Controller struct {
 	fs         afero.Fs
 	httpClient *http.Client
+	gh         GitHub
+}
+
+type GitHub interface {
+	GetContent(ctx context.Context, owner, repo, path, ref string) (string, error)
 }
 
 // New creates a new Controller instance with the provided filesystem and environment.
 // The filesystem is used for all file operations, allowing for easy testing with mock filesystems.
-func New(fs afero.Fs) *Controller {
+func New(fs afero.Fs, gh GitHub) *Controller {
 	return &Controller{
 		fs:         fs,
 		httpClient: http.DefaultClient, // TODO Change
+		gh:         gh,
 	}
 }

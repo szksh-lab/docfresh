@@ -72,6 +72,9 @@ func (c *Controller) exec(ctx context.Context, file string, input *BlockInput) (
 	if input.HTTP != nil {
 		return c.request(ctx, input.HTTP.URL)
 	}
+	if input.GitHubContent != nil {
+		return c.getGitHubContent(ctx, input.GitHubContent)
+	}
 	return nil, errors.New("no command or file specified")
 }
 
@@ -112,5 +115,20 @@ func (c *Controller) request(ctx context.Context, uri string) (*TemplateInput, e
 		Type:    "http",
 		URL:     uri,
 		Content: string(b),
+	}, nil
+}
+
+func (c *Controller) getGitHubContent(ctx context.Context, content *GitHubContent) (*TemplateInput, error) {
+	s, err := c.gh.GetContent(ctx, content.Owner, content.Repo, content.Path, content.Ref)
+	if err != nil {
+		return nil, fmt.Errorf("get a file by GitHub Content API: %w", err)
+	}
+	return &TemplateInput{
+		Type:    "http",
+		Content: s,
+		Owner:   content.Owner,
+		Repo:    content.Repo,
+		Path:    content.Path,
+		Ref:     content.Ref,
 	}, nil
 }
