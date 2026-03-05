@@ -67,10 +67,10 @@ func (c *Controller) exec(ctx context.Context, file string, input *BlockInput) (
 		return c.execCommand(ctx, file, input.Command)
 	}
 	if input.File != nil {
-		return c.readFile(file, input.File.Path)
+		return c.readFile(file, input.File)
 	}
 	if input.HTTP != nil {
-		return c.request(ctx, input.HTTP.URL)
+		return c.request(ctx, input.HTTP)
 	}
 	if input.GitHubContent != nil {
 		return c.getGitHubContent(ctx, input.GitHubContent)
@@ -78,8 +78,8 @@ func (c *Controller) exec(ctx context.Context, file string, input *BlockInput) (
 	return nil, errors.New("no command or file specified")
 }
 
-func (c *Controller) readFile(file, p string) (*TemplateInput, error) {
-	p = filepath.FromSlash(p)
+func (c *Controller) readFile(file string, f *File) (*TemplateInput, error) {
+	p := filepath.FromSlash(f.Path)
 	if !filepath.IsAbs(p) {
 		p = filepath.Join(filepath.Dir(file), p)
 	}
@@ -94,8 +94,8 @@ func (c *Controller) readFile(file, p string) (*TemplateInput, error) {
 	}, nil
 }
 
-func (c *Controller) request(ctx context.Context, uri string) (*TemplateInput, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, uri, nil)
+func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, h.URL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create http request: %w", err)
 	}
@@ -113,7 +113,7 @@ func (c *Controller) request(ctx context.Context, uri string) (*TemplateInput, e
 	}
 	return &TemplateInput{
 		Type:    "http",
-		URL:     uri,
+		URL:     h.URL,
 		Content: string(b),
 	}, nil
 }
@@ -124,7 +124,7 @@ func (c *Controller) getGitHubContent(ctx context.Context, content *GitHubConten
 		return nil, fmt.Errorf("get a file by GitHub Content API: %w", err)
 	}
 	return &TemplateInput{
-		Type:    "http",
+		Type:    "github-content",
 		Content: s,
 		Owner:   content.Owner,
 		Repo:    content.Repo,

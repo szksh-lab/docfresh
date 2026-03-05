@@ -96,11 +96,29 @@ type BlockInput struct {
 	Template      *Template      `yaml:",omitempty"`
 }
 
+type TemplateData struct {
+	Vars map[string]any
+}
+
+func (b *BlockInput) TemplateData() *TemplateData {
+	if b.File != nil {
+		return b.File.TemplateData
+	}
+	if b.HTTP != nil {
+		return b.HTTP.TemplateData
+	}
+	if b.GitHubContent != nil {
+		return b.GitHubContent.TemplateData
+	}
+	return nil
+}
+
 type GitHubContent struct {
-	Owner string
-	Repo  string
-	Ref   string
-	Path  string
+	Owner        string
+	Repo         string
+	Ref          string
+	Path         string
+	TemplateData *TemplateData `yaml:"template"`
 }
 
 type Template struct {
@@ -108,11 +126,13 @@ type Template struct {
 }
 
 type HTTP struct {
-	URL string
+	URL          string
+	TemplateData *TemplateData `yaml:"template"`
 }
 
 type File struct {
-	Path string
+	Path         string
+	TemplateData *TemplateData `yaml:"template"`
 }
 
 type Command struct {
@@ -140,4 +160,6 @@ type TemplateInput struct {
 	Owner string
 	Repo  string
 	Ref   string
+	// template variables
+	Vars map[string]any
 }

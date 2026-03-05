@@ -149,6 +149,10 @@ command:
 - file.path: The relative path from the current file to the loaded file
 - http.url: The URL to fetch the content from
 - template.content: The content to be rendered by the template engine
+- github_content.owner: GitHub repository owner
+- github_content.repo: GitHub repository name
+- github_content.path: GitHub repository content path
+- github_content.ref: GitHub repository content ref. This is optional.
 
 ### Examples
 
@@ -298,4 +302,20 @@ If you use [ghtkn](https://github.com/suzuki-shunsuke/ghtkn), you can pass an ac
 
 ```sh
 export DOCFRESH_GHTKN_ENABLED=true
+```
+
+### Read Files As Templates
+
+```
+Hello, {{.Vars.name}}
+```
+
+```md
+<!-- docfresh begin
+file:
+  path: file/template.md
+  template:
+    vars:
+      name: foo
+-->
 ```

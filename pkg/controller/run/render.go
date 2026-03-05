@@ -42,7 +42,7 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	if err != nil {
 		return "", fmt.Errorf("execute a command: %w", err)
 	}
-	s, err := c.render(tpl, result)
+	s, err := c.render(tpl, result, block.Input.TemplateData())
 	if err != nil {
 		return "", fmt.Errorf("render template: %w", err)
 	}
@@ -66,16 +66,37 @@ func (c *Controller) runPreCommand(ctx context.Context, file string, block *Bloc
 	return nil
 }
 
-func (c *Controller) render(tpl *template.Template, result *TemplateInput) (string, error) {
+func execTpl(tpl *template.Template, data any) (string, error) {
+	buf := &bytes.Buffer{}
+	if err := tpl.Execute(buf, data); err != nil {
+		return "", fmt.Errorf("execute a template: %w", err)
+	}
+	return buf.String(), nil
+}
+
+func (c *Controller) render(tpl *template.Template, result *TemplateInput, templateData *TemplateData) (string, error) {
 	switch result.Type {
-	case "local-file", "http":
-		return result.Content, nil
-	case "command":
-		buf := &bytes.Buffer{}
-		if err := tpl.Execute(buf, result); err != nil {
-			return "", fmt.Errorf("execute a template: %w", err)
+	case "local-file", "http", "github-content":
+		if templateData == nil {
+			return result.Content, nil
 		}
-		return buf.String(), nil
+		fns := txtFuncMap()
+		tpl, err := template.New("_").Funcs(fns).Parse(result.Content)
+		if err != nil {
+			return "", fmt.Errorf("parse command template: %w", err)
+		}
+		result.Vars = templateData.Vars
+		content, err := execTpl(tpl, result)
+		if err != nil {
+			return "", err
+		}
+		if tpl == nil {
+			return content, nil
+		}
+		result.Content = content
+		return execTpl(tpl, result)
+	case "command":
+		return execTpl(tpl, result)
 	default:
 		return "", fmt.Errorf("unknown type: %s", result.Type)
 	}
