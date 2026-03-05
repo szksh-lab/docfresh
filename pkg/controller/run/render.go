@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"strings"
 	"text/template"
@@ -45,24 +46,8 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 		return "", fmt.Errorf("execute a command: %w", err)
 	}
 	if t := block.Input.Test(); t != "" {
-		prog, err := expr.Compile(t, expr.Env(result), expr.AsBool())
-		if err != nil {
-			fmt.Fprintf(c.stderr, `[ERROR] compile an expression
-%v`, err)
-			return "", ecerror.Wrap(nil, 1)
-		}
-		output, err := expr.Run(prog, result)
-		if err != nil {
-			fmt.Fprintf(c.stderr, `[ERROR] evaluate an expression
-%v`, err)
-			return "", ecerror.Wrap(nil, 1)
-		}
-		f, ok := output.(bool)
-		if !ok {
-			return "", errors.New("the test result must be boolean")
-		}
-		if !f {
-			return "", errors.New("test failed")
+		if err := testResult(c.stderr, t, result); err != nil {
+			return "", err
 		}
 	}
 	s, err := c.render(tpl, result, block.Input.TemplateData())
@@ -77,6 +62,29 @@ func appendEndComment(content, s, endComment string) string {
 		return content + "\n" + s + endComment
 	}
 	return content + "\n" + s + "\n" + endComment
+}
+
+func testResult(stderr io.Writer, testCode string, result *TemplateInput) error {
+	prog, err := expr.Compile(testCode, expr.Env(result), expr.AsBool())
+	if err != nil {
+		fmt.Fprintf(stderr, `[ERROR] compile an expression
+%v`, err)
+		return ecerror.Wrap(nil, 1)
+	}
+	output, err := expr.Run(prog, result)
+	if err != nil {
+		fmt.Fprintf(stderr, `[ERROR] evaluate an expression
+%v`, err)
+		return ecerror.Wrap(nil, 1)
+	}
+	f, ok := output.(bool)
+	if !ok {
+		return errors.New("the test result must be boolean")
+	}
+	if !f {
+		return slogerr.With(errors.New("test failed"), "test", testCode)
+	}
+	return nil
 }
 
 func (c *Controller) runPreCommand(ctx context.Context, file string, block *Block) error {

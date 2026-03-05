@@ -167,7 +167,7 @@ Note that the following sprig functions aren't available due to security concern
 - expandenv
 - getHostByName
 
-#### Available Variables
+#### Available Variables In Templates
 
 command:
 
@@ -325,8 +325,26 @@ file:
 ```md
 <!-- docfresh begin
 command:
-  command: npm test
+  command: echo test
   test: |
-    Stdout contains "foo"
+    Stdout contains "test"
 -->
 ```
+
+`test` is evaluated using [Expr](https://expr-lang.org/).
+Clear, precise error messages with position indicators to help debug expressions quickly.
+
+```
++ echo hello
+hello
+[ERROR] compile an expression
+unexpected token Identifier("conains") (1:8)
+ | Stdout conains "helo"
+ | .......^exit status 1
+```
+
+[About the language, please see the document of Expr.](https://expr-lang.org/docs/language-definition)
+
+#### Available Variables In Expressions
+
+Available Variables are same with available variables in templates.
