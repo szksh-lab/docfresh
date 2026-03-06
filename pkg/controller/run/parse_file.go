@@ -82,6 +82,39 @@ func parseFile(content string) ([]*Block, error) { //nolint:cyclop
 	return blocks, nil
 }
 
+// countLeadingBackticks returns the number of leading backtick characters in s.
+func countLeadingBackticks(s string) int {
+	n := 0
+	for _, c := range s {
+		if c != '`' {
+			break
+		}
+		n++
+	}
+	return n
+}
+
+// isClosingFence reports whether trimmed is a valid closing fence
+// with at least minBackticks backticks.
+func isClosingFence(trimmed string, minBackticks int) bool {
+	n := countLeadingBackticks(trimmed)
+	if n < minBackticks {
+		return false
+	}
+	// Closing fence must contain only backticks and optional whitespace.
+	return strings.TrimRight(trimmed[n:], " \t") == ""
+}
+
+// nextLine returns the line text and the absolute end-of-line position.
+// lineEnd points to the '\n' or len(content) if there is no trailing newline.
+func nextLine(content string, pos int) (string, int) {
+	idx := strings.Index(content[pos:], "\n")
+	if idx == -1 {
+		return content[pos:], len(content)
+	}
+	return content[pos : pos+idx], pos + idx
+}
+
 // findCodeBlockRanges returns byte-offset ranges [start, end) for fenced code blocks.
 func findCodeBlockRanges(content string) [][2]int {
 	var ranges [][2]int
@@ -91,43 +124,14 @@ func findCodeBlockRanges(content string) [][2]int {
 	blockStart := 0
 
 	for pos < len(content) {
-		lineEnd := strings.Index(content[pos:], "\n")
-		var line string
-		if lineEnd == -1 {
-			line = content[pos:]
-			lineEnd = len(content)
-		} else {
-			lineEnd += pos
-			line = content[pos:lineEnd]
-		}
-
+		line, lineEnd := nextLine(content, pos)
 		trimmed := strings.TrimLeft(line, " \t")
-		if strings.HasPrefix(trimmed, "```") {
-			backtickCount := 0
-			for _, c := range trimmed {
-				if c == '`' {
-					backtickCount++
-				} else {
-					break
-				}
-			}
 
-			if !inCodeBlock {
-				inCodeBlock = true
-				openBackticks = backtickCount
-				blockStart = pos
-			} else if backtickCount >= openBackticks {
-				// Closing fence must contain only backticks and optional whitespace.
-				afterBackticks := strings.TrimRight(trimmed[backtickCount:], " \t")
-				if afterBackticks == "" {
-					end := lineEnd
-					if end < len(content) {
-						end++ // include \n
-					}
-					ranges = append(ranges, [2]int{blockStart, end})
-					inCodeBlock = false
-				}
-			}
+		if strings.HasPrefix(trimmed, "```") {
+			ranges, inCodeBlock, openBackticks, blockStart = handleFenceLine(
+				trimmed, pos, lineEnd, len(content),
+				ranges, inCodeBlock, openBackticks, blockStart,
+			)
 		}
 
 		if lineEnd < len(content) {
@@ -142,6 +146,28 @@ func findCodeBlockRanges(content string) [][2]int {
 	}
 
 	return ranges
+}
+
+func handleFenceLine(
+	trimmed string, lineStart, lineEnd, contentLen int,
+	ranges [][2]int, inCodeBlock bool, openBackticks, blockStart int,
+) ([][2]int, bool, int, int) {
+	backtickCount := countLeadingBackticks(trimmed)
+
+	if !inCodeBlock {
+		return ranges, true, backtickCount, lineStart
+	}
+
+	if !isClosingFence(trimmed, openBackticks) {
+		return ranges, inCodeBlock, openBackticks, blockStart
+	}
+
+	end := lineEnd
+	if end < contentLen {
+		end++ // include \n
+	}
+	ranges = append(ranges, [2]int{blockStart, end})
+	return ranges, false, 0, 0
 }
 
 // indexOutsideCodeBlocks works like strings.Index(content[start:], substr)
