@@ -21,7 +21,7 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	if block.Input == nil {
 		return "", errors.New("block input is nil")
 	}
-	tpl, err := c.getTemplate(tpls, block)
+	tpl, err := getTemplate(c.fs, tpls, block, file)
 	if err != nil {
 		return "", err
 	}
@@ -142,18 +142,4 @@ func (c *Controller) render(tpl *template.Template, result *TemplateInput, templ
 	default:
 		return "", fmt.Errorf("unknown type: %s", result.Type)
 	}
-}
-
-func (c *Controller) getTemplate(tpls *Templates, block *Block) (*template.Template, error) {
-	if block.Input.Template == nil {
-		if block.Input.Command != nil {
-			return tpls.Command, nil
-		}
-		return nil, nil //nolint:nilnil
-	}
-	tpl, err := template.New("_").Funcs(tpls.Funcs).Parse(block.Input.Template.Content)
-	if err != nil {
-		return nil, fmt.Errorf("parse block template: %w", err)
-	}
-	return tpl, nil
 }

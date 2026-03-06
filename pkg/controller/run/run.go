@@ -141,6 +141,7 @@ type GitHubContent struct {
 
 type Template struct {
 	Content string
+	Path    string
 }
 
 type HTTP struct {
