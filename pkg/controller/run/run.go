@@ -176,6 +176,7 @@ type Command struct {
 	Test           string            `json:"test,omitempty"`
 	ScriptLanguage string            `json:"script_language,omitempty" yaml:"script_language"`
 	Timeout        int               `json:"timeout,omitempty"`
+	TimeoutSigkill int               `json:"timeout_sigkill,omitempty"`
 	Shell          []string          `json:"shell,omitempty"`
 	Envs           map[string]string `json:"envs,omitempty"`
 	IgnoreFail     bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail"`

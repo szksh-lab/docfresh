@@ -3,12 +3,13 @@ package run
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"path/filepath"
 )
 
-func (c *Controller) exec(ctx context.Context, file string, input *BlockInput) (*TemplateInput, error) {
+func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string, input *BlockInput) (*TemplateInput, error) {
 	if input.Command != nil {
-		return c.execCommand(ctx, file, input.Command)
+		return c.execCommand(ctx, logger, file, input.Command)
 	}
 	if input.File != nil {
 		return c.readFile(file, input.File.Path)

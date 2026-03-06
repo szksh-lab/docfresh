@@ -53,6 +53,9 @@
         "timeout": {
           "type": "integer"
         },
+        "timeout_sigkill": {
+          "type": "integer"
+        },
         "shell": {
           "items": {
             "type": "string"

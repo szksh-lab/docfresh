@@ -25,7 +25,7 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	content := block.BeginComment
 	if block.Input.PostCommand != nil {
 		defer func() {
-			if err := c.runPostCommand(ctx, file, block); err != nil {
+			if err := c.runPostCommand(ctx, logger, file, block); err != nil {
 				if gErr == nil {
 					gErr = err
 					return
@@ -34,10 +34,10 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 			}
 		}()
 	}
-	if err := c.runPreCommand(ctx, file, block); err != nil {
+	if err := c.runPreCommand(ctx, logger, file, block); err != nil {
 		return "", fmt.Errorf("execute pre_command: %w", err)
 	}
-	result, err := c.exec(ctx, file, block.Input)
+	result, err := c.exec(ctx, logger, file, block.Input)
 	if err != nil {
 		return "", fmt.Errorf("execute a command: %w", err)
 	}

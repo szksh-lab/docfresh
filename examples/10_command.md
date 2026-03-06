@@ -224,3 +224,41 @@ cat temporary.txt
 temporary
 ```
 <!-- docfresh end -->
+
+## command.timeout
+
+By default, there is no timeout.
+If timeout is exceeded, the signal SIGINT is sent to the process.
+
+<!-- docfresh begin
+command:
+  timeout: 1 # 1 seconds
+  timeout_sigkill: 2 # By default, 1000 hours
+  ignore_fail: true
+  shell:
+    - node
+    - -e
+  command: |
+    process.on("SIGINT", () => {
+      console.log("SIGINT was sent");
+    });
+    console.log("Start");
+    setTimeout(() => {
+      console.log("Completed");
+    }, 1000 * 10);
+-->
+```sh
+process.on("SIGINT", () => {
+  console.log("SIGINT was sent");
+});
+console.log("Start");
+setTimeout(() => {
+  console.log("Completed");
+}, 1000 * 10);
+```
+
+```
+Start
+SIGINT was sent
+```
+<!-- docfresh end -->

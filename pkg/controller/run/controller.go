@@ -18,6 +18,7 @@ type Controller struct {
 	gh         GitHub
 	stderr     io.Writer
 	langs      map[string]*Language
+	environ    []string
 }
 
 type GitHub interface {
@@ -37,5 +38,6 @@ func New(fs afero.Fs, gh GitHub) (*Controller, error) {
 		gh:         gh,
 		stderr:     os.Stderr,
 		langs:      langs,
+		environ:    os.Environ(),
 	}, nil
 }
