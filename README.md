@@ -167,7 +167,7 @@ Note that the following sprig functions aren't available due to security concern
 - expandenv
 - getHostByName
 
-#### Available Variables
+#### Available Variables In Templates
 
 command:
 
@@ -319,3 +319,32 @@ file:
       name: foo
 -->
 ```
+
+### Test
+
+```md
+<!-- docfresh begin
+command:
+  command: echo test
+  test: |
+    Stdout contains "test"
+-->
+```
+
+`test` is evaluated using [Expr](https://expr-lang.org/).
+Clear, precise error messages with position indicators to help debug expressions quickly.
+
+```
++ echo hello
+hello
+[ERROR] compile an expression
+literal not terminated (1:23)
+ | Stdout contains "hello
+ | ......................^+ echo post
+```
+
+[About the language, please see the document of Expr.](https://expr-lang.org/docs/language-definition)
+
+#### Available Variables In Expressions
+
+Available Variables are same with available variables in templates.

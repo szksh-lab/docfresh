@@ -3,7 +3,9 @@ package run
 
 import (
 	"context"
+	"io"
 	"net/http"
+	"os"
 
 	"github.com/spf13/afero"
 )
@@ -14,6 +16,7 @@ type Controller struct {
 	fs         afero.Fs
 	httpClient *http.Client
 	gh         GitHub
+	stderr     io.Writer
 }
 
 type GitHub interface {
@@ -27,5 +30,6 @@ func New(fs afero.Fs, gh GitHub) *Controller {
 		fs:         fs,
 		httpClient: http.DefaultClient, // TODO Change
 		gh:         gh,
+		stderr:     os.Stderr,
 	}
 }

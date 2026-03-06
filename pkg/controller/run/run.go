@@ -113,12 +113,29 @@ func (b *BlockInput) TemplateData() *TemplateData {
 	return nil
 }
 
+func (b *BlockInput) Test() string {
+	if b.File != nil {
+		return b.File.Test
+	}
+	if b.HTTP != nil {
+		return b.HTTP.Test
+	}
+	if b.GitHubContent != nil {
+		return b.GitHubContent.Test
+	}
+	if b.Command != nil {
+		return b.Command.Test
+	}
+	return ""
+}
+
 type GitHubContent struct {
 	Owner        string
 	Repo         string
 	Ref          string
 	Path         string
 	TemplateData *TemplateData `yaml:"template"`
+	Test         string
 }
 
 type Template struct {
@@ -128,11 +145,13 @@ type Template struct {
 type HTTP struct {
 	URL          string
 	TemplateData *TemplateData `yaml:"template"`
+	Test         string
 }
 
 type File struct {
 	Path         string
 	TemplateData *TemplateData `yaml:"template"`
+	Test         string
 }
 
 type Command struct {
@@ -140,6 +159,7 @@ type Command struct {
 	Dir        string   `yaml:",omitempty"`
 	Shell      []string `yaml:",omitempty"`
 	IgnoreFail bool     `yaml:"ignore_fail,omitempty"`
+	Test       string
 }
 
 type TemplateInput struct {
