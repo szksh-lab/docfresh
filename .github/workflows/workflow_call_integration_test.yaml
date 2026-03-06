@@ -22,3 +22,8 @@ jobs:
       - run: docfresh -v
       - run: docfresh init
       - run: docfresh run examples/*.md
+      - run: |
+          if ! git diff --exit-code examples; then
+            echo "::error:: example files are modified" >&2
+            exit 1
+          fi
