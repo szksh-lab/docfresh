@@ -10,7 +10,6 @@ import (
 	"text/template"
 
 	"github.com/expr-lang/expr"
-
 	"github.com/suzuki-shunsuke/go-error-with-exit-code/ecerror"
 	"github.com/suzuki-shunsuke/slog-error/slogerr"
 )
