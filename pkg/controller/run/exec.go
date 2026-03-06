@@ -12,7 +12,7 @@ func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string,
 		return c.execCommand(ctx, logger, file, input.Command)
 	}
 	if input.File != nil {
-		return c.readFile(file, input.File.Path)
+		return c.readFile(file, input.File)
 	}
 	if input.HTTP != nil {
 		return c.request(ctx, input.HTTP)

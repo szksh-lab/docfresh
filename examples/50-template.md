@@ -36,7 +36,7 @@ read template file
 ```
 <!-- docfresh end -->
 
-## template variables
+## Render file as templates
 
 <!-- docfresh begin
 file:
@@ -46,4 +46,25 @@ file:
       name: foo
 -->
 Hello, foo
+<!-- docfresh end -->
+
+## Template Variables
+
+<!-- docfresh begin
+command:
+  command: echo Hello
+template:
+  path: file/template3.md
+  vars:
+    project: foo
+-->
+project: foo
+
+```console
+$ echo Hello
+```
+
+```
+Hello
+```
 <!-- docfresh end -->

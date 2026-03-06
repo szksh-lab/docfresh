@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/afero"
 )
 
-func (c *Controller) readFile(baseFile, file string) (*TemplateInput, error) {
-	p := resolvePath(baseFile, file)
+func (c *Controller) readFile(baseFile string, file *File) (*TemplateInput, error) {
+	p := resolvePath(baseFile, file.Path)
 	b, err := afero.ReadFile(c.fs, p)
 	if err != nil {
 		return nil, fmt.Errorf("read file: %w", err)
@@ -19,10 +19,21 @@ func (c *Controller) readFile(baseFile, file string) (*TemplateInput, error) {
 	if ok {
 		sl = lang.Language
 	}
-	return &TemplateInput{
+	content := string(b)
+
+	result := &TemplateInput{
 		Type:           "local-file",
-		Path:           file,
+		Path:           file.Path,
 		ScriptLanguage: sl,
-		Content:        string(b),
-	}, nil
+		Content:        content,
+		Vars:           file.Template.GetVars(),
+	}
+
+	if file.Template != nil {
+		if err := renderTemplate(content, result); err != nil {
+			return nil, err
+		}
+	}
+
+	return result, nil
 }
