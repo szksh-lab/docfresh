@@ -48,7 +48,7 @@ command:
 docfresh run date.md
 ```
 
-Then the datetime is updated.
+Then the date command and the result is embedded into the document.
 
 ## Examples
 
