@@ -14,7 +14,7 @@ import (
 	"github.com/suzuki-shunsuke/slog-error/slogerr"
 )
 
-func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls *Templates, file string, block *Block) (gS string, gErr error) {
+func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls *Templates, file string, block *Block) (gS string, gErr error) { //nolint:cyclop
 	if block.Type == "text" {
 		return block.Content, nil
 	}
@@ -28,25 +28,12 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	content := block.BeginComment
 	if block.Input.PostCommand != nil {
 		defer func() {
-			result, err := c.execCommand(ctx, file, block.Input.PostCommand)
-			if err != nil {
+			if err := c.runPostCommand(ctx, file, block); err != nil {
 				if gErr == nil {
-					gErr = fmt.Errorf("execute post_command: %w", err)
+					gErr = err
 					return
 				}
 				slogerr.WithError(logger, err).Error("execute post_command")
-				return
-			}
-			if block.Input.PostCommand.Test == "" {
-				return
-			}
-			if err := testResult(c.stderr, block.Input.PostCommand.Test, result); err != nil {
-				if gErr == nil {
-					gErr = fmt.Errorf("test the result of post_command: %w", err)
-					return
-				}
-				slogerr.WithError(logger, err).Error("test the result of post_command")
-				return
 			}
 		}()
 	}
@@ -67,6 +54,20 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 		return "", fmt.Errorf("render template: %w", err)
 	}
 	return appendEndComment(content, s, block.EndComment), nil
+}
+
+func (c *Controller) runPostCommand(ctx context.Context, file string, block *Block) error {
+	result, err := c.execCommand(ctx, file, block.Input.PostCommand)
+	if err != nil {
+		return fmt.Errorf("execute post command: %w", err)
+	}
+	if block.Input.PostCommand.Test == "" {
+		return nil
+	}
+	if err := testResult(c.stderr, block.Input.PostCommand.Test, result); err != nil {
+		return fmt.Errorf("test the result of post command: %w", err)
+	}
+	return nil
 }
 
 func appendEndComment(content, s, endComment string) string {
@@ -94,7 +95,7 @@ func testResult(stderr io.Writer, testCode string, result *TemplateInput) error 
 		return errors.New("the test result must be boolean")
 	}
 	if !f {
-		return slogerr.With(errors.New("test failed"), "test", testCode)
+		return slogerr.With(errors.New("test failed"), "test", testCode) //nolint:wrapcheck
 	}
 	return nil
 }
