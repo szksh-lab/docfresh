@@ -30,12 +30,23 @@ func getCommandDir(file string, command *Command) string {
 	return filepath.Join(filepath.Dir(file), command.Dir)
 }
 
-func (c *Controller) execCommand(ctx context.Context, file string, command *Command) (*TemplateInput, error) {
-	shell := command.Shell
-	if shell == nil {
-		shell = []string{"bash", "-c"}
+func getShell(command *Command) []string {
+	if len(command.Shell) > 0 {
+		return command.Shell
 	}
-	cmd := exec.CommandContext(ctx, shell[0], append(shell[1:], command.Command)...) //nolint:gosec
+	if command.Script != "" {
+		return []string{"bash"}
+	}
+	return []string{"bash", "-c"}
+}
+
+func (c *Controller) execCommand(ctx context.Context, file string, command *Command) (*TemplateInput, error) {
+	shell := getShell(command)
+	script := command.Script
+	if command.Command != "" {
+		script = command.Command
+	}
+	cmd := exec.CommandContext(ctx, shell[0], append(shell[1:], script)...) //nolint:gosec
 	cmd.Dir = getCommandDir(file, command)
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
@@ -48,6 +59,7 @@ func (c *Controller) execCommand(ctx context.Context, file string, command *Comm
 		for k, v := range command.Envs {
 			envs = append(envs, k+"="+v)
 		}
+		cmd.Env = envs
 	}
 	fmt.Fprintln(os.Stderr, "+", command.Command)
 	if err := cmd.Run(); err != nil && !command.IgnoreFail {
@@ -55,7 +67,9 @@ func (c *Controller) execCommand(ctx context.Context, file string, command *Comm
 	}
 	return &TemplateInput{
 		Type:           "command",
+		Shell:          shell,
 		Command:        command.Command,
+		Script:         command.Script,
 		Dir:            command.Dir,
 		Stdout:         stdout.String(),
 		Stderr:         stderr.String(),

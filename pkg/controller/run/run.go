@@ -160,6 +160,7 @@ type File struct {
 
 type Command struct {
 	Command    string
+	Script     string
 	Dir        string   `yaml:",omitempty"`
 	Shell      []string `yaml:",omitempty"`
 	IgnoreFail bool     `yaml:"ignore_fail,omitempty"`
@@ -171,6 +172,8 @@ type TemplateInput struct {
 	Type string
 	// command
 	Command        string
+	Script         string
+	Shell          []string
 	Dir            string
 	Stdout         string
 	Stderr         string

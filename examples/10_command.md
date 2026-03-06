@@ -31,6 +31,23 @@ This is read from foo.md
 ```
 <!-- docfresh end -->
 
+## Set Environment Variables
+
+<!-- docfresh begin
+command:
+  command: echo "$FOO"
+  envs:
+    FOO: foo
+-->
+```sh
+echo "$FOO"
+```
+
+```
+foo
+```
+<!-- docfresh end -->
+
 ## Change Shell
 
 <!-- docfresh begin
@@ -55,6 +72,24 @@ console.log("hello")
 
 ```
 hello
+```
+<!-- docfresh end -->
+
+## command.script
+
+Instead of `command.command`, you can specify an external script by `command.script`.
+If `command.script` is set, the default `command.shell` is `bash`.
+
+<!-- docfresh begin
+command:
+  script: file/hello.sh
+-->
+```
+bash file/hello.sh
+```
+
+```
+Hello
 ```
 <!-- docfresh end -->
 
