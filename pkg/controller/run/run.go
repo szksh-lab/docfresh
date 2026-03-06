@@ -160,6 +160,7 @@ type Command struct {
 	Shell      []string `yaml:",omitempty"`
 	IgnoreFail bool     `yaml:"ignore_fail,omitempty"`
 	Test       string
+	Envs       map[string]string
 }
 
 type TemplateInput struct {

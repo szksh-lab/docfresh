@@ -47,6 +47,12 @@ func (c *Controller) execCommand(ctx context.Context, file string, command *Comm
 	cmd.Stdout = io.MultiWriter(os.Stdout, stdout, combinedOutput)
 	cmd.Stderr = io.MultiWriter(os.Stderr, stderr, combinedOutput)
 	setCancel(cmd)
+	if len(command.Envs) > 0 {
+		envs := os.Environ()
+		for k, v := range command.Envs {
+			envs = append(envs, k+"="+v)
+		}
+	}
 	fmt.Fprintln(os.Stderr, "+", command.Command)
 	if err := cmd.Run(); err != nil && !command.IgnoreFail {
 		return nil, fmt.Errorf("execute a command: %w", err)

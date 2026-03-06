@@ -144,6 +144,7 @@ command:
 - command.dir: The relative path from the current file to the directory where the command is executed. By default, the directory of the file.
 - command.shell: The list of shell command executing command. By default, `["bash", "-c"]`
 - command.ignore_fail: Ignore command failure. By default, `false`
+- command.envs: Environment variables.
 - pre_command: External Command executed before `command`. If it fails, docfresh fails and `command` isn't run. The command and output are outputted to the console but the result isn't affected to the document. This is used for setup and checking the requirement. The format is same with `command`
 - post_command: External Command executed after `command`. If it fails, docfresh fails. The command and output are outputted to the console but the result isn't affected to the document. This is used for testing the command result and cleaning up. The format is same with `command`. `post_command` is run even if `pre_command` and `command` fail.
 - file.path: The relative path from the current file to the loaded file
