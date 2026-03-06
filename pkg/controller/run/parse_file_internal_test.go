@@ -121,6 +121,38 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 			},
 		},
 		{
+			name:    "markers inside inline code are ignored",
+			content: "before `<!-- docfresh begin -->` and `<!-- docfresh end -->` after\n",
+			want: []*Block{
+				{Type: "text", Content: "before `<!-- docfresh begin -->` and `<!-- docfresh end -->` after\n"},
+			},
+		},
+		{
+			name:    "markers inside double-backtick inline code are ignored",
+			content: "before `` <!-- docfresh end --> `` after\n",
+			want: []*Block{
+				{Type: "text", Content: "before `` <!-- docfresh end --> `` after\n"},
+			},
+		},
+		{
+			name:    "inline code with markers plus real markers outside",
+			content: "See `<!-- docfresh begin -->` for syntax.\n<!-- docfresh begin\ncommand:\n  command: echo real\n-->\nold\n<!-- docfresh end -->\n", //nolint:dupword
+			want: []*Block{
+				{Type: "text", Content: "See `<!-- docfresh begin -->` for syntax.\n"},
+				{
+					Type:         "block",
+					BeginComment: "<!-- docfresh begin\ncommand:\n  command: echo real\n-->", //nolint:dupword
+					EndComment:   "<!-- docfresh end -->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo real",
+						},
+					},
+				},
+				{Type: "text", Content: "\n"},
+			},
+		},
+		{
 			name:    "mixed: code block with markers and real markers outside",
 			content: "# Doc\n```markdown\n<!-- docfresh begin\ncommand:\n  command: echo fake\n-->\nfake\n<!-- docfresh end -->\n```\n<!-- docfresh begin\ncommand:\n  command: echo real\n-->\nold output\n<!-- docfresh end -->\n", //nolint:dupword
 			want: []*Block{
