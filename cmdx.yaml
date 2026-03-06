@@ -49,7 +49,7 @@ tasks:
     description: Update example
     usage: Update example
     script: |
-      go run ./cmd/docfresh run examples/*.md
+      go run ./cmd/docfresh run README.md examples/*.md
   - name: fmt
     description: Format code
     usage: Format code
