@@ -17,8 +17,8 @@ import (
 var commandTemplate string
 
 type Input struct {
-	ConfigFilePath string
-	Files          map[string]struct{}
+	// ConfigFilePath string
+	Files map[string]struct{}
 }
 
 type Templates struct {
