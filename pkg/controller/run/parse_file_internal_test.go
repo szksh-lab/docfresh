@@ -95,6 +95,49 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 			content: "<!-- docfresh begin\ncommand:\n  command: echo hello\n", //nolint:dupword
 			wantErr: "unclosed <!-- docfresh begin comment: missing -->",
 		},
+		{
+			name:    "markers inside fenced code block are ignored",
+			content: "before\n```\n<!-- docfresh begin\ncommand:\n  command: echo hello\n-->\nsome output\n<!-- docfresh end -->\n```\nafter\n", //nolint:dupword
+			want: []*Block{
+				{Type: "text", Content: "before\n```\n<!-- docfresh begin\ncommand:\n  command: echo hello\n-->\nsome output\n<!-- docfresh end -->\n```\nafter\n"}, //nolint:dupword
+			},
+		},
+		{
+			name:    "markers outside code block still work",
+			content: "```\ncode block\n```\n<!-- docfresh begin\ncommand:\n  command: echo hi\n-->\nold\n<!-- docfresh end -->\n", //nolint:dupword
+			want: []*Block{
+				{Type: "text", Content: "```\ncode block\n```\n"},
+				{
+					Type:         "block",
+					BeginComment: "<!-- docfresh begin\ncommand:\n  command: echo hi\n-->", //nolint:dupword
+					EndComment:   "<!-- docfresh end -->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo hi",
+						},
+					},
+				},
+				{Type: "text", Content: "\n"},
+			},
+		},
+		{
+			name:    "mixed: code block with markers and real markers outside",
+			content: "# Doc\n```markdown\n<!-- docfresh begin\ncommand:\n  command: echo fake\n-->\nfake\n<!-- docfresh end -->\n```\n<!-- docfresh begin\ncommand:\n  command: echo real\n-->\nold output\n<!-- docfresh end -->\n", //nolint:dupword
+			want: []*Block{
+				{Type: "text", Content: "# Doc\n```markdown\n<!-- docfresh begin\ncommand:\n  command: echo fake\n-->\nfake\n<!-- docfresh end -->\n```\n"}, //nolint:dupword
+				{
+					Type:         "block",
+					BeginComment: "<!-- docfresh begin\ncommand:\n  command: echo real\n-->", //nolint:dupword
+					EndComment:   "<!-- docfresh end -->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo real",
+						},
+					},
+				},
+				{Type: "text", Content: "\n"},
+			},
+		},
 	}
 
 	for _, tt := range tests {
