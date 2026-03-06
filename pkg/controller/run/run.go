@@ -88,14 +88,14 @@ type Block struct {
 }
 
 type BlockInput struct {
-	PreCommand                  *Command       `yaml:"pre_command,omitempty"`
-	PostCommand                 *Command       `yaml:"post_command,omitempty"`
-	Command                     *Command       `yaml:",omitempty"`
-	File                        *File          `yaml:",omitempty"`
-	HTTP                        *HTTP          `yaml:",omitempty"`
-	GitHubContent               *GitHubContent `yaml:"github_content,omitempty"`
-	Template                    *Template      `yaml:",omitempty"`
-	UseFencedCodeBlockForOutput *bool          `yaml:"use_fenced_code_block_for_output,omitempty"`
+	PreCommand                  *Command       `json:"pre_command,omitempty" yaml:"pre_command"`
+	PostCommand                 *Command       `json:"post_command,omitempty" yaml:"post_command"`
+	Command                     *Command       `json:"command,omitempty"`
+	File                        *File          `json:"file,omitempty"`
+	HTTP                        *HTTP          `json:"http,omitempty"`
+	GitHubContent               *GitHubContent `json:"github_content,omitempty" yaml:"github_content"`
+	Template                    *Template      `json:"template,omitempty"`
+	UseFencedCodeBlockForOutput *bool          `json:"use_fenced_code_block_for_output,omitempty" yaml:"use_fenced_code_block_for_output"`
 }
 
 func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
@@ -109,18 +109,18 @@ func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
 }
 
 type TemplateData struct {
-	Vars map[string]any
+	Vars map[string]any `json:"vars,omitempty"`
 }
 
 func (b *BlockInput) TemplateData() *TemplateData {
 	if b.File != nil {
-		return b.File.TemplateData
+		return b.File.Template
 	}
 	if b.HTTP != nil {
-		return b.HTTP.TemplateData
+		return b.HTTP.Template
 	}
 	if b.GitHubContent != nil {
-		return b.GitHubContent.TemplateData
+		return b.GitHubContent.Template
 	}
 	return nil
 }
@@ -142,43 +142,44 @@ func (b *BlockInput) Test() string {
 }
 
 type GitHubContent struct {
-	Owner        string
-	Repo         string
-	Ref          string
-	Path         string
-	TemplateData *TemplateData `yaml:"template"`
-	Test         string
+	Owner    string        `json:"owner"`
+	Repo     string        `json:"repo"`
+	Ref      string        `json:"ref,omitempty"`
+	Path     string        `json:"path"`
+	Template *TemplateData `json:"template,omitempty"`
+	Test     string        `json:"test,omitempty"`
 }
 
 type Template struct {
-	Content string
-	Path    string
+	Content string `json:"content,omitempty"`
+	Path    string `json:"path,omitempty"`
 }
 
 type HTTP struct {
-	URL          string
-	TemplateData *TemplateData `yaml:"template"`
-	Test         string
-	Timeout      int
-	Header       http.Header
+	URL      string        `json:"url"`
+	Template *TemplateData `json:"template,omitempty"`
+	Test     string        `json:"test,omitempty"`
+	Timeout  int           `json:"timeout,omitempty"`
+	Header   http.Header   `json:"header,omitempty"`
 }
 
 type File struct {
-	Path         string
-	TemplateData *TemplateData `yaml:"template"`
-	Test         string
+	Path     string        `json:"path"`
+	Template *TemplateData `json:"template,omitempty"`
+	Test     string        `json:"test,omitempty"`
 }
 
 type Command struct {
-	Command        string
-	Script         string
-	Dir            string `yaml:",omitempty"`
-	Test           string
-	ScriptLanguage string   `yaml:"script_language,omitempty"`
-	Shell          []string `yaml:",omitempty"`
-	Envs           map[string]string
-	IgnoreFail     bool `yaml:"ignore_fail,omitempty"`
-	EmbedScript    bool `yaml:"embed_script,omitempty"`
+	Command        string            `json:"command,omitempty"`
+	Script         string            `json:"script,omitempty"`
+	Dir            string            `json:"dir,omitempty"`
+	Test           string            `json:"test,omitempty"`
+	ScriptLanguage string            `json:"script_language,omitempty" yaml:"script_language"`
+	Timeout        int               `json:"timeout,omitempty"`
+	Shell          []string          `json:"shell,omitempty"`
+	Envs           map[string]string `json:"envs,omitempty"`
+	IgnoreFail     bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail"`
+	EmbedScript    bool              `json:"embed_script,omitempty" yaml:"embed_script"`
 }
 
 type TemplateInput struct {

@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/suzuki-shunsuke/docfresh/pkg/controller/run/block-input",
+  "$ref": "#/$defs/BlockInput",
+  "$defs": {
+    "BlockInput": {
+      "properties": {
+        "pre_command": {
+          "$ref": "#/$defs/Command"
+        },
+        "post_command": {
+          "$ref": "#/$defs/Command"
+        },
+        "command": {
+          "$ref": "#/$defs/Command"
+        },
+        "file": {
+          "$ref": "#/$defs/File"
+        },
+        "http": {
+          "$ref": "#/$defs/HTTP"
+        },
+        "github_content": {
+          "$ref": "#/$defs/GitHubContent"
+        },
+        "template": {
+          "$ref": "#/$defs/Template"
+        },
+        "use_fenced_code_block_for_output": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Command": {
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "script": {
+          "type": "string"
+        },
+        "dir": {
+          "type": "string"
+        },
+        "test": {
+          "type": "string"
+        },
+        "script_language": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer"
+        },
+        "shell": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "envs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "ignore_fail": {
+          "type": "boolean"
+        },
+        "embed_script": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "File": {
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "template": {
+          "$ref": "#/$defs/TemplateData"
+        },
+        "test": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "path"
+      ]
+    },
+    "GitHubContent": {
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "repo": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "template": {
+          "$ref": "#/$defs/TemplateData"
+        },
+        "test": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "owner",
+        "repo",
+        "path"
+      ]
+    },
+    "HTTP": {
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "template": {
+          "$ref": "#/$defs/TemplateData"
+        },
+        "test": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer"
+        },
+        "header": {
+          "$ref": "#/$defs/Header"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "url"
+      ]
+    },
+    "Header": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "type": "object"
+    },
+    "Template": {
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TemplateData": {
+      "properties": {
+        "vars": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}
