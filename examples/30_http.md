@@ -3,16 +3,14 @@
 <!-- docfresh begin
 http:
   url: https://raw.githubusercontent.com/suzuki-shunsuke/docfresh/refs/heads/main/_typos.toml
-template:
-  content: |
-    ```toml
-    {{.Content}}
-    ```
+use_fenced_code_block_for_output: true
 -->
+```toml
 [default.extend-words]
 ERRO = "ERRO"
 intoto = "intoto"
 typ = "typ"
+```
 <!-- docfresh end -->
 
 ## timeout, header
