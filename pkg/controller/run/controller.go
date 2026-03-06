@@ -17,6 +17,7 @@ type Controller struct {
 	httpClient *http.Client
 	gh         GitHub
 	stderr     io.Writer
+	langs      map[string]*Language
 }
 
 type GitHub interface {
@@ -25,11 +26,16 @@ type GitHub interface {
 
 // New creates a new Controller instance with the provided filesystem and environment.
 // The filesystem is used for all file operations, allowing for easy testing with mock filesystems.
-func New(fs afero.Fs, gh GitHub) *Controller {
+func New(fs afero.Fs, gh GitHub) (*Controller, error) {
+	langs, err := defaultScriptLanguages()
+	if err != nil {
+		return nil, err
+	}
 	return &Controller{
 		fs:         fs,
 		httpClient: http.DefaultClient, // TODO Change
 		gh:         gh,
 		stderr:     os.Stderr,
-	}
+		langs:      langs,
+	}, nil
 }

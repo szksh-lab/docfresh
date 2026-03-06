@@ -1,0 +1,44 @@
+go:
+  shell:
+    - go
+    - run
+  extensions:
+    - .go
+hcl:
+  extensions:
+    - .hcl
+js:
+  shell:
+    - node
+  extensions:
+    - .js
+json:
+  extensions:
+    - .json
+md:
+  extensions:
+    - .md
+py:
+  shell:
+    - python3
+  extensions:
+    - .py
+sh:
+  shell:
+    - bash
+  extensions:
+    - .sh
+    - .bash
+tf:
+  extensions:
+    - .tf
+toml:
+  extensions:
+    - .toml
+ts:
+  extensions:
+    - .ts
+yaml:
+  extensions:
+    - .yaml
+    - .yml

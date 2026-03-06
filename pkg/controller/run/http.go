@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"path"
 	"time"
 )
 
@@ -37,10 +39,22 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 	if err != nil {
 		return nil, fmt.Errorf("read response body: %w", err)
 	}
+
+	sl := ""
+	u, err := url.Parse(h.URL)
+	if err == nil {
+		ext := path.Ext(u.Path)
+		lang, ok := c.langs[ext]
+		if ok {
+			sl = lang.Language
+		}
+	}
+
 	return &TemplateInput{
-		Type:    "http",
-		URL:     h.URL,
-		Content: string(b),
-		Timeout: h.Timeout,
+		Type:           "http",
+		URL:            h.URL,
+		Content:        string(b),
+		ScriptLanguage: sl,
+		Timeout:        h.Timeout,
 	}, nil
 }

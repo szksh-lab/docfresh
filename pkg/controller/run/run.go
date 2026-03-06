@@ -88,13 +88,24 @@ type Block struct {
 }
 
 type BlockInput struct {
-	PreCommand    *Command       `yaml:"pre_command,omitempty"`
-	PostCommand   *Command       `yaml:"post_command,omitempty"`
-	Command       *Command       `yaml:",omitempty"`
-	File          *File          `yaml:",omitempty"`
-	HTTP          *HTTP          `yaml:",omitempty"`
-	GitHubContent *GitHubContent `yaml:"github_content,omitempty"`
-	Template      *Template      `yaml:",omitempty"`
+	PreCommand                  *Command       `yaml:"pre_command,omitempty"`
+	PostCommand                 *Command       `yaml:"post_command,omitempty"`
+	Command                     *Command       `yaml:",omitempty"`
+	File                        *File          `yaml:",omitempty"`
+	HTTP                        *HTTP          `yaml:",omitempty"`
+	GitHubContent               *GitHubContent `yaml:"github_content,omitempty"`
+	Template                    *Template      `yaml:",omitempty"`
+	UseFencedCodeBlockForOutput *bool          `yaml:"use_fenced_code_block_for_output,omitempty"`
+}
+
+func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
+	if b.UseFencedCodeBlockForOutput != nil {
+		return *b.UseFencedCodeBlockForOutput
+	}
+	if b.Command != nil {
+		return true
+	}
+	return false
 }
 
 type TemplateData struct {
@@ -159,22 +170,28 @@ type File struct {
 }
 
 type Command struct {
-	Command    string
-	Dir        string   `yaml:",omitempty"`
-	Shell      []string `yaml:",omitempty"`
-	IgnoreFail bool     `yaml:"ignore_fail,omitempty"`
-	Test       string
-	Envs       map[string]string
+	Command        string
+	Script         string
+	Dir            string `yaml:",omitempty"`
+	Test           string
+	ScriptLanguage string   `yaml:"script_language,omitempty"`
+	Shell          []string `yaml:",omitempty"`
+	Envs           map[string]string
+	IgnoreFail     bool `yaml:"ignore_fail,omitempty"`
+	EmbedScript    bool `yaml:"embed_script,omitempty"`
 }
 
 type TemplateInput struct {
 	Type string
 	// command
 	Command        string
+	Script         string
+	Shell          []string
 	Dir            string
 	Stdout         string
 	Stderr         string
 	CombinedOutput string
+	ScriptLanguage string
 	ExitCode       int
 	// file
 	Path    string
@@ -188,4 +205,7 @@ type TemplateInput struct {
 	Ref   string
 	// template variables
 	Vars map[string]any
+	//
+	EmbedScript                 bool
+	UseFencedCodeBlockForOutput bool
 }

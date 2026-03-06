@@ -55,7 +55,10 @@ func runAction(ctx context.Context, logger *slogutil.Logger, args *RunArgs) erro
 		return fmt.Errorf("check if ghtkn integration is enabled: %w", err)
 	}
 	gh := github.New(ctx, logger.Logger, github.GetGitHubTokenFromEnv(), ghtknEnabled)
-	ctrl := run.New(fs, gh)
+	ctrl, err := run.New(fs, gh)
+	if err != nil {
+		return fmt.Errorf("initialize a controller: %w", err)
+	}
 	files := make(map[string]struct{}, len(args.Files))
 	for _, file := range args.Files {
 		files[file] = struct{}{}

@@ -31,6 +31,23 @@ This is read from foo.md
 ```
 <!-- docfresh end -->
 
+## Set Environment Variables
+
+<!-- docfresh begin
+command:
+  command: echo "$FOO"
+  envs:
+    FOO: foo
+-->
+```sh
+echo "$FOO"
+```
+
+```
+foo
+```
+<!-- docfresh end -->
+
 ## Change Shell
 
 <!-- docfresh begin
@@ -55,6 +72,115 @@ console.log("hello")
 
 ```
 hello
+```
+<!-- docfresh end -->
+
+## command.script
+
+Instead of `command.command`, you can specify an external script by `command.script`.
+
+`shell` is automatically detected in case of some popular languages such as Go and Python.
+If it can't be automatically detected, `shell` should be specified explicitly.
+
+<!-- docfresh begin
+command:
+  script: file/hello.sh
+-->
+```sh
+bash file/hello.sh
+```
+
+```
+Hello
+```
+<!-- docfresh end -->
+
+### Embed the content of command.script
+
+If `command.embed_script` is true, the script content is embedded.
+`script_language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
+
+<!-- docfresh begin
+command:
+  script: file/hello.sh
+  embed_script: true
+template:
+  content: |
+    ```sh
+    {{trimSuffix "\n" .Content}}
+    ```
+
+    ```
+    {{trimSuffix "\n" .CombinedOutput}}
+    ```
+-->
+```sh
+#!/usr/bin/env bash
+
+echo Hello
+```
+
+```
+Hello
+```
+<!-- docfresh end -->
+
+### Automatic detection of script languages by file extensions
+
+`script_language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
+
+[languages.yaml](../pkg/controller/run/languages.yaml)
+
+<!-- docfresh begin
+file:
+  path: ../pkg/controller/run/languages.yaml
+use_fenced_code_block_for_output: true
+-->
+```yaml
+go:
+  shell:
+    - go
+    - run
+  extensions:
+    - .go
+hcl:
+  extensions:
+    - .hcl
+js:
+  shell:
+    - node
+  extensions:
+    - .js
+json:
+  extensions:
+    - .json
+md:
+  extensions:
+    - .md
+py:
+  shell:
+    - python3
+  extensions:
+    - .py
+sh:
+  shell:
+    - bash
+  extensions:
+    - .sh
+    - .bash
+tf:
+  extensions:
+    - .tf
+toml:
+  extensions:
+    - .toml
+ts:
+  extensions:
+    - .ts
+yaml:
+  extensions:
+    - .yaml
+    - .yml
 ```
 <!-- docfresh end -->
 
