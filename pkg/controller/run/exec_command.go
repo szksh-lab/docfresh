@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -14,11 +15,15 @@ import (
 	"github.com/spf13/afero"
 )
 
-const waitDelay = 1000 * time.Hour
+const defaultWaitDelay = 1000 * time.Hour
 
-func setCancel(cmd *exec.Cmd) {
+func setCancel(logger *slog.Logger, cmd *exec.Cmd, waitDelay time.Duration) {
 	cmd.Cancel = func() error {
+		logger.Warn("SIGINT is sent to cancel the command")
 		return cmd.Process.Signal(os.Interrupt)
+	}
+	if waitDelay == 0 {
+		waitDelay = defaultWaitDelay
 	}
 	cmd.WaitDelay = waitDelay
 }
@@ -51,7 +56,7 @@ func getShell(command *Command, langs map[string]*Language) ([]string, error) {
 	return nil, errors.New("shell is required")
 }
 
-func (c *Controller) execCommand(ctx context.Context, file string, command *Command) (*TemplateInput, error) {
+func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file string, command *Command) (*TemplateInput, error) {
 	shell, err := getShell(command, c.langs)
 	if err != nil {
 		return nil, fmt.Errorf("get command.shell: %w", err)
@@ -74,6 +79,11 @@ func (c *Controller) execCommand(ctx context.Context, file string, command *Comm
 		}
 		content = string(b)
 	}
+	if command.Timeout > 0 {
+		requestCtx, cancel := context.WithTimeout(ctx, time.Duration(command.Timeout)*time.Second)
+		defer cancel()
+		ctx = requestCtx
+	}
 	cmd := exec.CommandContext(ctx, shell[0], append(shell[1:], script)...) //nolint:gosec
 	cmd.Dir = dir
 	stdout := &bytes.Buffer{}
@@ -81,7 +91,7 @@ func (c *Controller) execCommand(ctx context.Context, file string, command *Comm
 	combinedOutput := &bytes.Buffer{}
 	cmd.Stdout = io.MultiWriter(os.Stdout, stdout, combinedOutput)
 	cmd.Stderr = io.MultiWriter(os.Stderr, stderr, combinedOutput)
-	setCancel(cmd)
+	setCancel(logger, cmd, time.Duration(command.TimeoutSigkill)*time.Second)
 	if len(command.Envs) > 0 {
 		envs := os.Environ()
 		for k, v := range command.Envs {

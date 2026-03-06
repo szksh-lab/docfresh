@@ -3,10 +3,11 @@ package run
 import (
 	"context"
 	"fmt"
+	"log/slog"
 )
 
-func (c *Controller) runPostCommand(ctx context.Context, file string, block *Block) error {
-	result, err := c.execCommand(ctx, file, block.Input.PostCommand)
+func (c *Controller) runPostCommand(ctx context.Context, logger *slog.Logger, file string, block *Block) error {
+	result, err := c.execCommand(ctx, logger, file, block.Input.PostCommand)
 	if err != nil {
 		return fmt.Errorf("execute post command: %w", err)
 	}

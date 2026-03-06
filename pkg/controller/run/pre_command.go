@@ -3,13 +3,14 @@ package run
 import (
 	"context"
 	"fmt"
+	"log/slog"
 )
 
-func (c *Controller) runPreCommand(ctx context.Context, file string, block *Block) error {
+func (c *Controller) runPreCommand(ctx context.Context, logger *slog.Logger, file string, block *Block) error {
 	if block.Input.PreCommand == nil {
 		return nil
 	}
-	result, err := c.execCommand(ctx, file, block.Input.PreCommand)
+	result, err := c.execCommand(ctx, logger, file, block.Input.PreCommand)
 	if err != nil {
 		return err
 	}
