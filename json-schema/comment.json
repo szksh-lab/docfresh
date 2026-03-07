@@ -114,9 +114,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "required": [
-        "path"
-      ]
+      "required": ["path"]
     },
     "GitHubContent": {
       "properties": {
@@ -147,11 +145,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "required": [
-        "owner",
-        "repo",
-        "path"
-      ]
+      "required": ["owner", "repo", "path"]
     },
     "HTTP": {
       "properties": {
@@ -178,9 +172,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "Header": {
       "additionalProperties": {
@@ -200,6 +192,9 @@
         "path": {
           "type": "string",
           "description": "The file path. It's an abolute path or relative path from the current file."
+        },
+        "vars": {
+          "type": "object"
         }
       },
       "additionalProperties": false,

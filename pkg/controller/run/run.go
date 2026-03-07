@@ -112,6 +112,13 @@ type TemplateData struct {
 	Vars map[string]any `json:"vars,omitempty" jsonschema_description:"Variables which are passed to template. They can be referred in templates as .Vars.<variable name>"`
 }
 
+func (t *TemplateData) GetVars() map[string]any {
+	if t == nil {
+		return nil
+	}
+	return t.Vars
+}
+
 func (b *BlockInput) TemplateData() *TemplateData {
 	if b.File != nil {
 		return b.File.Template
@@ -151,8 +158,17 @@ type GitHubContent struct {
 }
 
 type Template struct {
-	Content string `json:"content,omitempty" jsonschema_description:"The content of template"`
-	Path    string `json:"path,omitempty" jsonschema_description:"The file path. It's an abolute path or relative path from the current file."`
+	Content  string             `json:"content,omitempty" jsonschema_description:"The content of template"`
+	Path     string             `json:"path,omitempty" jsonschema_description:"The file path. It's an abolute path or relative path from the current file."`
+	Template *template.Template `json:"-" yaml:"-"`
+	Vars     map[string]any     `json:"vars,omitempty"`
+}
+
+func (t *Template) GetVars() map[string]any {
+	if t == nil {
+		return nil
+	}
+	return t.Vars
 }
 
 type HTTP struct {

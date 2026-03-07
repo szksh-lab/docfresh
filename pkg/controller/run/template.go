@@ -25,10 +25,12 @@ func execTpl(tpl *template.Template, data any) (string, error) {
 	return buf.String(), nil
 }
 
-func getTemplate(fs afero.Fs, tpls *Templates, block *Block, file string) (*template.Template, error) {
+func getTemplate(fs afero.Fs, tpls *Templates, block *Block, file string) (*Template, error) {
 	if block.Input.Template == nil {
 		if block.Input.Command != nil {
-			return tpls.Command, nil
+			return &Template{
+				Template: tpls.Command,
+			}, nil
 		}
 		return nil, nil //nolint:nilnil
 	}
@@ -45,5 +47,22 @@ func getTemplate(fs afero.Fs, tpls *Templates, block *Block, file string) (*temp
 	if err != nil {
 		return nil, fmt.Errorf("parse block template: %w", err)
 	}
-	return tpl, nil
+	return &Template{
+		Template: tpl,
+		Vars:     block.Input.Template.Vars,
+	}, nil
+}
+
+func renderTemplate(content string, result *TemplateInput) error {
+	fns := txtFuncMap()
+	tpl, err := template.New("_").Funcs(fns).Parse(content)
+	if err != nil {
+		return fmt.Errorf("parse file template: %w", err)
+	}
+	s, err := execTpl(tpl, result)
+	if err != nil {
+		return fmt.Errorf("render file as template: %w", err)
+	}
+	result.Content = s
+	return nil
 }

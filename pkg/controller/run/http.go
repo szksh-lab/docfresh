@@ -40,21 +40,35 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 		return nil, fmt.Errorf("read response body: %w", err)
 	}
 
-	sl := ""
-	u, err := url.Parse(h.URL)
-	if err == nil {
-		ext := path.Ext(u.Path)
-		lang, ok := c.langs[ext]
-		if ok {
-			sl = lang.Language
-		}
-	}
+	sl := c.scriptLanguageFromURL(h.URL)
 
-	return &TemplateInput{
+	content := string(b)
+	result := &TemplateInput{
 		Type:           "http",
 		URL:            h.URL,
 		Content:        string(b),
 		ScriptLanguage: sl,
 		Timeout:        h.Timeout,
-	}, nil
+		Vars:           h.Template.GetVars(),
+	}
+	if h.Template != nil {
+		if err := renderTemplate(content, result); err != nil {
+			return nil, err
+		}
+	}
+
+	return result, nil
+}
+
+func (c *Controller) scriptLanguageFromURL(rawURL string) string {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return ""
+	}
+	ext := path.Ext(u.Path)
+	lang, ok := c.langs[ext]
+	if !ok {
+		return ""
+	}
+	return lang.Language
 }

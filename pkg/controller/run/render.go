@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 	"strings"
-	"text/template"
 
 	"github.com/suzuki-shunsuke/slog-error/slogerr"
 )
@@ -47,7 +46,7 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 			return "", err
 		}
 	}
-	s, err := render(tpl, result, block.Input.TemplateData())
+	s, err := render(tpl, result)
 	if err != nil {
 		return "", fmt.Errorf("render template: %w", err)
 	}
@@ -61,43 +60,28 @@ func appendEndComment(content, s, endComment string) string {
 	return content + "\n" + s + "\n" + endComment
 }
 
-func render(tpl *template.Template, result *TemplateInput, templateData *TemplateData) (string, error) {
+func render(tpl *Template, result *TemplateInput) (string, error) {
 	switch result.Type {
 	case "local-file", "http", "github-content":
-		return renderFile(tpl, result, templateData)
+		return renderFile(tpl, result)
 	case "command":
-		return execTpl(tpl, result)
+		result.Vars = tpl.Vars
+		return execTpl(tpl.Template, result)
 	default:
 		return "", fmt.Errorf("unknown type: %s", result.Type)
 	}
 }
 
-func renderFile(tpl *template.Template, result *TemplateInput, templateData *TemplateData) (string, error) {
-	if templateData == nil {
-		if tpl != nil {
-			return execTpl(tpl, result)
-		}
-		if !result.UseFencedCodeBlockForOutput {
-			return result.Content, nil
-		}
-		if !strings.HasSuffix(result.Content, "\n") {
-			result.Content += "\n"
-		}
-		return "```" + result.ScriptLanguage + "\n" + result.Content + "```", nil
+func renderFile(tpl *Template, result *TemplateInput) (string, error) {
+	if tpl != nil {
+		result.Vars = tpl.Vars
+		return execTpl(tpl.Template, result)
 	}
-	fns := txtFuncMap()
-	contentTpl, err := template.New("_").Funcs(fns).Parse(result.Content)
-	if err != nil {
-		return "", fmt.Errorf("parse command template: %w", err)
+	if !result.UseFencedCodeBlockForOutput {
+		return result.Content, nil
 	}
-	result.Vars = templateData.Vars
-	content, err := execTpl(contentTpl, result)
-	if err != nil {
-		return "", err
+	if !strings.HasSuffix(result.Content, "\n") {
+		result.Content += "\n"
 	}
-	if contentTpl == nil {
-		return content, nil
-	}
-	result.Content = content
-	return execTpl(contentTpl, result)
+	return "```" + result.ScriptLanguage + "\n" + result.Content + "```", nil
 }
