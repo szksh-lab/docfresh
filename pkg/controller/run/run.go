@@ -161,7 +161,7 @@ type Template struct {
 	Content  string             `json:"content,omitempty" jsonschema_description:"The content of template"`
 	Path     string             `json:"path,omitempty" jsonschema_description:"The file path. It's an abolute path or relative path from the current file."`
 	Template *template.Template `json:"-" yaml:"-"`
-	Vars     map[string]any     `json:"vars,omitempty"`
+	Vars     map[string]any     `json:"vars,omitempty" jsonschema_description:"Variables which are passed to template. They can be referred in templates as .Vars.<variable name>"`
 }
 
 func (t *Template) GetVars() map[string]any {

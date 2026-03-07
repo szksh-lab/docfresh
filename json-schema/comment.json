@@ -202,7 +202,8 @@
           "description": "The file path. It's an abolute path or relative path from the current file."
         },
         "vars": {
-          "type": "object"
+          "type": "object",
+          "description": "Variables which are passed to template. They can be referred in templates as .Vars.\u003cvariable name\u003e"
         }
       },
       "additionalProperties": false,
