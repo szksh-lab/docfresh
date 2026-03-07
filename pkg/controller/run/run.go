@@ -88,14 +88,14 @@ type Block struct {
 }
 
 type BlockInput struct {
-	PreCommand                  *Command       `json:"pre_command,omitempty" yaml:"pre_command"`
-	PostCommand                 *Command       `json:"post_command,omitempty" yaml:"post_command"`
-	Command                     *Command       `json:"command,omitempty"`
-	File                        *File          `json:"file,omitempty"`
-	HTTP                        *HTTP          `json:"http,omitempty"`
-	GitHubContent               *GitHubContent `json:"github_content,omitempty" yaml:"github_content"`
-	Template                    *Template      `json:"template,omitempty"`
-	UseFencedCodeBlockForOutput *bool          `json:"use_fenced_code_block_for_output,omitempty" yaml:"use_fenced_code_block_for_output"`
+	PreCommand                  *Command       `json:"pre_command,omitempty" yaml:"pre_command" jsonschema_description:"Execute external commands before the action like command, file, http, and github_content. If it fails, docfresh fails and the action isn't run. The command and output are outputted to the console but the result isn't affected to the document. This is used for setup and checking the requirement"`
+	PostCommand                 *Command       `json:"post_command,omitempty" yaml:"post_command" jsonschema_description:"Execute external commands after the action like command, file, http, and github_content. If it fails, docfresh fails. The command and output are outputted to the console but the result isn't affected to the document. This is used for testing the action result and cleaning up. post_command is run even if pre_command and action fail."`
+	Command                     *Command       `json:"command,omitempty" jsonschema_description:"Execute the external command and embed the result to documents"`
+	File                        *File          `json:"file,omitempty" jsonschema_description:"Read a local file and embed the content to documents"`
+	HTTP                        *HTTP          `json:"http,omitempty" jsonschema_description:"Call a HTTP request and embed the response to documents"`
+	GitHubContent               *GitHubContent `json:"github_content,omitempty" yaml:"github_content" jsonschema_description:"Fetch a file by GitHub Contents API and embed it into documents"`
+	Template                    *Template      `json:"template,omitempty" jsonschema_description:"Customize the template"`
+	UseFencedCodeBlockForOutput *bool          `json:"use_fenced_code_block_for_output,omitempty" yaml:"use_fenced_code_block_for_output" jsonschema_description:"If this is true, the content is wrapped using markdown's fenced code block"`
 }
 
 func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
@@ -109,7 +109,7 @@ func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
 }
 
 type TemplateData struct {
-	Vars map[string]any `json:"vars,omitempty"`
+	Vars map[string]any `json:"vars,omitempty" jsonschema_description:"Variables which are passed to template. They can be referred in templates as .Vars.<variable name>"`
 }
 
 func (t *TemplateData) GetVars() map[string]any {
@@ -149,19 +149,19 @@ func (b *BlockInput) Test() string {
 }
 
 type GitHubContent struct {
-	Owner    string        `json:"owner"`
-	Repo     string        `json:"repo"`
-	Ref      string        `json:"ref,omitempty"`
-	Path     string        `json:"path"`
-	Template *TemplateData `json:"template,omitempty"`
-	Test     string        `json:"test,omitempty"`
+	Owner    string        `json:"owner" jsonschema_description:"GitHub repository owner"`
+	Repo     string        `json:"repo" jsonschema_description:"GitHub repository name"`
+	Ref      string        `json:"ref,omitempty" jsonschema_description:"The ref (branch, tag, SHA). The default branch is used by default."`
+	Path     string        `json:"path" jsonschema_description:"The path of GitHub Contents API"`
+	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the file content is rendered as template rather than plain text."`
+	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
 }
 
 type Template struct {
+	Content  string             `json:"content,omitempty" jsonschema_description:"The content of template"`
+	Path     string             `json:"path,omitempty" jsonschema_description:"The file path. It's an absolute path or relative path from the current file."`
 	Template *template.Template `json:"-" yaml:"-"`
-	Content  string             `json:"content,omitempty"`
-	Path     string             `json:"path,omitempty"`
-	Vars     map[string]any     `json:"vars,omitempty"`
+	Vars     map[string]any     `json:"vars,omitempty" jsonschema_description:"Variables which are passed to template. They can be referred in templates as .Vars.<variable name>"`
 }
 
 func (t *Template) GetVars() map[string]any {
@@ -172,31 +172,31 @@ func (t *Template) GetVars() map[string]any {
 }
 
 type HTTP struct {
-	URL      string        `json:"url"`
-	Template *TemplateData `json:"template,omitempty"`
-	Test     string        `json:"test,omitempty"`
-	Timeout  int           `json:"timeout,omitempty"`
-	Header   http.Header   `json:"header,omitempty"`
+	URL      string        `json:"url" jsonschema_description:"URL for HTTP request"`
+	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the response body is rendered as template rather than plain text."`
+	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the response. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
+	Timeout  int           `json:"timeout,omitempty" jsonschema_description:"HTTP request timeout (seconds). The default value is 5 seconds. If the value is negative, timeout isn't set"`
+	Header   http.Header   `json:"header,omitempty" jsonschema_description:"HTTP request header."`
 }
 
 type File struct {
-	Path     string        `json:"path"`
-	Template *TemplateData `json:"template,omitempty"`
-	Test     string        `json:"test,omitempty"`
+	Path     string        `json:"path" jsonschema_description:"The file path. It's an absolute path or relative path from the current file."`
+	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the file is rendered as template rather than plain text."`
+	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
 }
 
 type Command struct {
-	Command        string            `json:"command,omitempty"`
-	Script         string            `json:"script,omitempty"`
-	Dir            string            `json:"dir,omitempty"`
-	Test           string            `json:"test,omitempty"`
-	ScriptLanguage string            `json:"script_language,omitempty" yaml:"script_language"`
-	Timeout        int               `json:"timeout,omitempty"`
-	TimeoutSigkill int               `json:"timeout_sigkill,omitempty"`
-	Shell          []string          `json:"shell,omitempty"`
-	Envs           map[string]string `json:"envs,omitempty"`
-	IgnoreFail     bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail"`
-	EmbedScript    bool              `json:"embed_script,omitempty" yaml:"embed_script"`
+	Command        string            `json:"command,omitempty" jsonschema_description:"The content of executed script. Either command or script is required"`
+	Script         string            `json:"script,omitempty" jsonschema_description:"The file path to executed script. It's an absolute path or relative path from the current file. Either command or script is required"`
+	Dir            string            `json:"dir,omitempty" jsonschema_description:"The directory path where commands are executed. It's an absolute path or relative path from the current file. The default value is the directory where the current file is located"`
+	Test           string            `json:"test,omitempty" jsonschema_description:"Expr script to test the result of command. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
+	ScriptLanguage string            `json:"script_language,omitempty" yaml:"script_language" jsonschema_description:"Language of script. This is used for markdown's fenced code block. This is automatically detected in some languages such as Go and Python"`
+	Timeout        int               `json:"timeout,omitempty" jsonschema_description:"The timeout of command. By default, there is no timeout. If timeout is exceeded, the signal SIGINT is sent to the process."`
+	TimeoutSigkill int               `json:"timeout_sigkill,omitempty" jsonschema_description:"If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."`
+	Shell          []string          `json:"shell,omitempty" jsonschema_description:"The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"`
+	Envs           map[string]string `json:"envs,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
+	IgnoreFail     bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
+	EmbedScript    bool              `json:"embed_script,omitempty" yaml:"embed_script" jsonschema_description:"If this is true, the content of script is embedded into documents."`
 }
 
 type TemplateInput struct {

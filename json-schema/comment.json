@@ -6,28 +6,36 @@
     "BlockInput": {
       "properties": {
         "pre_command": {
-          "$ref": "#/$defs/Command"
+          "$ref": "#/$defs/Command",
+          "description": "Execute external commands before the action like command, file, http, and github_content. If it fails, docfresh fails and the action isn't run. The command and output are outputted to the console but the result isn't affected to the document. This is used for setup and checking the requirement"
         },
         "post_command": {
-          "$ref": "#/$defs/Command"
+          "$ref": "#/$defs/Command",
+          "description": "Execute external commands after the action like command, file, http, and github_content. If it fails, docfresh fails. The command and output are outputted to the console but the result isn't affected to the document. This is used for testing the action result and cleaning up. post_command is run even if pre_command and action fail."
         },
         "command": {
-          "$ref": "#/$defs/Command"
+          "$ref": "#/$defs/Command",
+          "description": "Execute the external command and embed the result to documents"
         },
         "file": {
-          "$ref": "#/$defs/File"
+          "$ref": "#/$defs/File",
+          "description": "Read a local file and embed the content to documents"
         },
         "http": {
-          "$ref": "#/$defs/HTTP"
+          "$ref": "#/$defs/HTTP",
+          "description": "Call a HTTP request and embed the response to documents"
         },
         "github_content": {
-          "$ref": "#/$defs/GitHubContent"
+          "$ref": "#/$defs/GitHubContent",
+          "description": "Fetch a file by GitHub Contents API and embed it into documents"
         },
         "template": {
-          "$ref": "#/$defs/Template"
+          "$ref": "#/$defs/Template",
+          "description": "Customize the template"
         },
         "use_fenced_code_block_for_output": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If this is true, the content is wrapped using markdown's fenced code block"
         }
       },
       "additionalProperties": false,
@@ -36,43 +44,54 @@
     "Command": {
       "properties": {
         "command": {
-          "type": "string"
+          "type": "string",
+          "description": "The content of executed script. Either command or script is required"
         },
         "script": {
-          "type": "string"
+          "type": "string",
+          "description": "The file path to executed script. It's an absolute path or relative path from the current file. Either command or script is required"
         },
         "dir": {
-          "type": "string"
+          "type": "string",
+          "description": "The directory path where commands are executed. It's an absolute path or relative path from the current file. The default value is the directory where the current file is located"
         },
         "test": {
-          "type": "string"
+          "type": "string",
+          "description": "Expr script to test the result of command. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
         },
         "script_language": {
-          "type": "string"
+          "type": "string",
+          "description": "Language of script. This is used for markdown's fenced code block. This is automatically detected in some languages such as Go and Python"
         },
         "timeout": {
-          "type": "integer"
+          "type": "integer",
+          "description": "The timeout of command. By default, there is no timeout. If timeout is exceeded, the signal SIGINT is sent to the process."
         },
         "timeout_sigkill": {
-          "type": "integer"
+          "type": "integer",
+          "description": "If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."
         },
         "shell": {
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "description": "The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"
         },
         "envs": {
           "additionalProperties": {
             "type": "string"
           },
-          "type": "object"
+          "type": "object",
+          "description": "Pairs of environment variable names and values"
         },
         "ignore_fail": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If this is true, docfresh does't fail even if command fails"
         },
         "embed_script": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If this is true, the content of script is embedded into documents."
         }
       },
       "additionalProperties": false,
@@ -81,13 +100,16 @@
     "File": {
       "properties": {
         "path": {
-          "type": "string"
+          "type": "string",
+          "description": "The file path. It's an absolute path or relative path from the current file."
         },
         "template": {
-          "$ref": "#/$defs/TemplateData"
+          "$ref": "#/$defs/TemplateData",
+          "description": "If this is set, the file is rendered as template rather than plain text."
         },
         "test": {
-          "type": "string"
+          "type": "string",
+          "description": "Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
         }
       },
       "additionalProperties": false,
@@ -99,22 +121,28 @@
     "GitHubContent": {
       "properties": {
         "owner": {
-          "type": "string"
+          "type": "string",
+          "description": "GitHub repository owner"
         },
         "repo": {
-          "type": "string"
+          "type": "string",
+          "description": "GitHub repository name"
         },
         "ref": {
-          "type": "string"
+          "type": "string",
+          "description": "The ref (branch, tag, SHA). The default branch is used by default."
         },
         "path": {
-          "type": "string"
+          "type": "string",
+          "description": "The path of GitHub Contents API"
         },
         "template": {
-          "$ref": "#/$defs/TemplateData"
+          "$ref": "#/$defs/TemplateData",
+          "description": "If this is set, the file content is rendered as template rather than plain text."
         },
         "test": {
-          "type": "string"
+          "type": "string",
+          "description": "Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
         }
       },
       "additionalProperties": false,
@@ -128,19 +156,24 @@
     "HTTP": {
       "properties": {
         "url": {
-          "type": "string"
+          "type": "string",
+          "description": "URL for HTTP request"
         },
         "template": {
-          "$ref": "#/$defs/TemplateData"
+          "$ref": "#/$defs/TemplateData",
+          "description": "If this is set, the response body is rendered as template rather than plain text."
         },
         "test": {
-          "type": "string"
+          "type": "string",
+          "description": "Expr script to test the response. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
         },
         "timeout": {
-          "type": "integer"
+          "type": "integer",
+          "description": "HTTP request timeout (seconds). The default value is 5 seconds. If the value is negative, timeout isn't set"
         },
         "header": {
-          "$ref": "#/$defs/Header"
+          "$ref": "#/$defs/Header",
+          "description": "HTTP request header."
         }
       },
       "additionalProperties": false,
@@ -161,13 +194,16 @@
     "Template": {
       "properties": {
         "content": {
-          "type": "string"
+          "type": "string",
+          "description": "The content of template"
         },
         "path": {
-          "type": "string"
+          "type": "string",
+          "description": "The file path. It's an absolute path or relative path from the current file."
         },
         "vars": {
-          "type": "object"
+          "type": "object",
+          "description": "Variables which are passed to template. They can be referred in templates as .Vars.\u003cvariable name\u003e"
         }
       },
       "additionalProperties": false,
@@ -176,7 +212,8 @@
     "TemplateData": {
       "properties": {
         "vars": {
-          "type": "object"
+          "type": "object",
+          "description": "Variables which are passed to template. They can be referred in templates as .Vars.\u003cvariable name\u003e"
         }
       },
       "additionalProperties": false,
