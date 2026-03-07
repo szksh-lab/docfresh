@@ -22,6 +22,8 @@ jobs:
       - run: docfresh -v
       # - run: docfresh init
       - run: docfresh run README.md examples/*.md
+        env:
+          DOCFRESH_GITHUB_TOKEN: ${{github.token}}
       - run: |
           if ! git diff --exit-code README.md examples; then
             echo "::error:: files are modified" >&2
