@@ -180,3 +180,12 @@ Lint:
 cmdx v # go vet
 cmdx l # golangci-lint
 ```
+
+## JSON Schema
+
+[JSON Schema](json-schema) is updated automatically by CI, so you don't need to update them manually.
+You can update them by the following command:
+
+```sh
+go run ./cmd/gen-jsonschema
+```
