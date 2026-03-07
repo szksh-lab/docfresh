@@ -276,3 +276,18 @@ Start
 SIGINT was sent
 ```
 <!-- docfresh end -->
+
+## command.quiet
+
+If this is true, the command output isn't outputted to documents.
+
+<!-- docfresh begin
+command:
+  command: echo hello
+  quiet: true
+-->
+```sh
+echo hello
+```
+
+<!-- docfresh end -->

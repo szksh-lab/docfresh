@@ -110,6 +110,7 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 		CombinedOutput: combinedOutput.String(),
 		ExitCode:       cmd.ProcessState.ExitCode(),
 		Content:        content,
+		Quiet:          command.Quiet,
 	}, nil
 }
 

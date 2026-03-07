@@ -92,6 +92,10 @@
         "embed_script": {
           "type": "boolean",
           "description": "If this is true, the content of script is embedded into documents."
+        },
+        "quiet": {
+          "type": "boolean",
+          "description": "If this is true, the command output isn't outputted to documents."
         }
       },
       "additionalProperties": false,
