@@ -1,5 +1,7 @@
 # docfresh
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/suzuki-shunsuke/docfresh)
+
 docfresh is a CLI making document with command and code snippet maintainable, reusable, and testable.
 It prevents document from being outdated.
 
@@ -148,8 +150,6 @@ Each directive must start with `<!-- docfresh begin` and must have a correspondi
 
 docfresh executes all file processing and commands sequentially.
 Commands within the same file are executed from top to bottom. If a command fails, the file will not be updated.
-
-Support for parallel processing across multiple files may be added in the future.
 
 ## YAML Syntax In Begin Comment
 
