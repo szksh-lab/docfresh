@@ -18,7 +18,7 @@ func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string,
 		return c.request(ctx, input.HTTP)
 	}
 	if input.GitHubContent != nil {
-		return c.getGitHubContent(ctx, input.GitHubContent)
+		return getGitHubContent(ctx, c.gh, c.langs, input.GitHubContent)
 	}
 	return nil, errors.New("no command or file specified")
 }

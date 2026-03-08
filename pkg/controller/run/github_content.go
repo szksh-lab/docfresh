@@ -6,8 +6,8 @@ import (
 	"path"
 )
 
-func (c *Controller) getGitHubContent(ctx context.Context, content *GitHubContent) (*TemplateInput, error) {
-	s, err := c.gh.GetContent(ctx, content.Owner, content.Repo, content.Path, content.Ref)
+func getGitHubContent(ctx context.Context, gh GitHub, langs map[string]*Language, content *GitHubContent) (*TemplateInput, error) {
+	s, err := gh.GetContent(ctx, content.Owner, content.Repo, content.Path, content.Ref)
 	if err != nil {
 		return nil, fmt.Errorf("get a file by GitHub Content API: %w", err)
 	}
@@ -17,7 +17,7 @@ func (c *Controller) getGitHubContent(ctx context.Context, content *GitHubConten
 	}
 	sl := content.Language
 	if sl == "" {
-		if lang, ok := c.langs[path.Ext(content.Path)]; ok {
+		if lang, ok := langs[path.Ext(content.Path)]; ok {
 			sl = lang.Language
 		}
 	}
