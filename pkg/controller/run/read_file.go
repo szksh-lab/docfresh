@@ -30,7 +30,7 @@ func (c *Controller) readFile(baseFile string, file *File) (*TemplateInput, erro
 	}
 
 	if file.Template != nil {
-		if err := renderTemplate(content, result); err != nil {
+		if err := renderTemplate(content, result, file.Template.Delims); err != nil {
 			return nil, err
 		}
 	}

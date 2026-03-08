@@ -52,7 +52,7 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 		Vars:           h.Template.GetVars(),
 	}
 	if h.Template != nil {
-		if err := renderTemplate(content, result); err != nil {
+		if err := renderTemplate(content, result, h.Template.Delims); err != nil {
 			return nil, err
 		}
 	}

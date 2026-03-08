@@ -128,7 +128,8 @@ func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
 }
 
 type TemplateData struct {
-	Vars map[string]any `json:"vars,omitempty" jsonschema_description:"Variables which are passed to template. They can be referred in templates as .Vars.<variable name>"`
+	Vars   map[string]any `json:"vars,omitempty" jsonschema_description:"Variables which are passed to template. They can be referred in templates as .Vars.<variable name>"`
+	Delims *Delims        `json:"delims,omitempty" jsonschema_description:"The delimiters. The default delimiters are '{{' and '}}'"`
 }
 
 func (t *TemplateData) GetVars() map[string]any {
@@ -176,11 +177,17 @@ type GitHubContent struct {
 	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
 }
 
+type Delims struct {
+	Left  string `json:"left" jsonschema_description:"The left delimiter of templates"`
+	Right string `json:"right" jsonschema_description:"The right delimiter of templates"`
+}
+
 type Template struct {
 	Content  string             `json:"content,omitempty" jsonschema_description:"The content of template"`
 	Path     string             `json:"path,omitempty" jsonschema_description:"The file path. It's an absolute path or relative path from the current file."`
 	Template *template.Template `json:"-" yaml:"-"`
 	Vars     map[string]any     `json:"vars,omitempty" jsonschema_description:"Variables which are passed to template. They can be referred in templates as .Vars.<variable name>"`
+	Delims   *Delims            `json:"delims,omitempty" jsonschema_description:"The delimiters. The default delimiters are '{{' and '}}'"`
 }
 
 func (t *Template) GetVars() map[string]any {
