@@ -41,16 +41,12 @@ command: |
 <!-- docfresh begin
 command:
   command: echo foo > foo.txt
+  quiet: true
 -->
 ```sh
 echo foo > foo.txt
 ```
 
-Output:
-
-```
-
-```
 <!-- docfresh end -->
 
 <!-- docfresh begin
