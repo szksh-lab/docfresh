@@ -112,11 +112,11 @@ func defaultDetailsTagSummary(result *TemplateInput) string {
 	case "http":
 		return result.URL
 	case "github-content":
-		s := result.Owner + "/" + result.Repo
+		s := result.Owner + "/" + result.Repo + "/" + result.Path
 		if result.Ref != "" {
-			s += "/" + result.Ref
+			s += "@" + result.Ref
 		}
-		return s + "/" + result.Path
+		return s
 	default:
 		return "Output"
 	}

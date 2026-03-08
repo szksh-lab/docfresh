@@ -119,7 +119,7 @@ type BlockInput struct {
 }
 
 type DetailsTag struct {
-	Summary string `json:"summary,omitempty" jsonschema_description:"The summary text. Defaults: 'Output' for commands, file path for file, URL for http, '<owner>/<repo>/<ref>/<path>' for github_content."`
+	Summary string `json:"summary,omitempty" jsonschema_description:"The summary text. Defaults: 'Output' for commands, file path for file, URL for http, '<owner>/<repo>/<path>[@<ref>]' for github_content."`
 }
 
 func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {

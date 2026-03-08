@@ -69,7 +69,7 @@ func TestDefaultDetailsTagSummary(t *testing.T) {
 		{
 			name:   "github-content with ref",
 			result: &TemplateInput{Type: "github-content", Owner: "org", Repo: "repo", Ref: "main", Path: "file.txt"},
-			want:   "org/repo/main/file.txt",
+			want:   "org/repo/file.txt@main",
 		},
 		{
 			name:   "github-content without ref",

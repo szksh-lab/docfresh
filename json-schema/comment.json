@@ -127,7 +127,7 @@
       "properties": {
         "summary": {
           "type": "string",
-          "description": "The summary text. Defaults: 'Output' for commands, file path for file, URL for http, '\u003cowner\u003e/\u003crepo\u003e/\u003cref\u003e/\u003cpath\u003e' for github_content."
+          "description": "The summary text. Defaults: 'Output' for commands, file path for file, URL for http, '\u003cowner\u003e/\u003crepo\u003e/\u003cpath\u003e[@\u003cref\u003e]' for github_content."
         }
       },
       "additionalProperties": false,
