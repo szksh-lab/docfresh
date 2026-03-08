@@ -13,12 +13,13 @@ import (
 // Controller manages the initialization of docfresh configuration.
 // It provides methods to create configuration files with appropriate permissions.
 type Controller struct {
-	fs         afero.Fs
-	httpClient *http.Client
-	gh         GitHub
-	stderr     io.Writer
-	langs      map[string]*Language
-	environ    []string
+	fs          afero.Fs
+	httpClient  *http.Client
+	gh          GitHub
+	stderr      io.Writer
+	langs       map[string]*Language
+	langsByName map[string]*Language
+	environ     []string
 }
 
 type GitHub interface {
@@ -28,16 +29,17 @@ type GitHub interface {
 // New creates a new Controller instance with the provided filesystem and environment.
 // The filesystem is used for all file operations, allowing for easy testing with mock filesystems.
 func New(fs afero.Fs, gh GitHub) (*Controller, error) {
-	langs, err := defaultScriptLanguages()
+	langs, langsByName, err := defaultScriptLanguages()
 	if err != nil {
 		return nil, err
 	}
 	return &Controller{
-		fs:         fs,
-		httpClient: http.DefaultClient, // TODO Change
-		gh:         gh,
-		stderr:     os.Stderr,
-		langs:      langs,
-		environ:    os.Environ(),
+		fs:          fs,
+		httpClient:  http.DefaultClient, // TODO Change
+		gh:          gh,
+		stderr:      os.Stderr,
+		langs:       langs,
+		langsByName: langsByName,
+		environ:     os.Environ(),
 	}, nil
 }

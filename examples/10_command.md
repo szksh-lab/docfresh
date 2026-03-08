@@ -60,9 +60,6 @@ foo
 command:
   command: console.log("hello")
   command_language: js
-  shell:
-    - node
-    - "-e"
 -->
 ```js
 console.log("hello")
@@ -140,7 +137,7 @@ code_block: true
 -->
 ```yaml
 go:
-  shell:
+  script_shell:
     - go
     - run
   extensions:
@@ -149,8 +146,11 @@ hcl:
   extensions:
     - .hcl
 js:
-  shell:
+  script_shell:
     - node
+  command_shell:
+    - node
+    - -e
   extensions:
     - .js
 json:
@@ -160,13 +160,19 @@ md:
   extensions:
     - .md
 py:
-  shell:
+  script_shell:
     - python3
+  command_shell:
+    - python3
+    - -c
   extensions:
     - .py
 sh:
-  shell:
+  script_shell:
     - bash
+  command_shell:
+    - bash
+    - -c
   extensions:
     - .sh
     - .bash
