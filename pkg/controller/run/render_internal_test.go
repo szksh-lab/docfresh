@@ -135,6 +135,45 @@ func TestAppendEndComment(t *testing.T) {
 	}
 }
 
+func TestCodeFence(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name    string
+		content string
+		want    string
+	}{
+		{
+			name:    "no backticks",
+			content: "hello world",
+			want:    "```",
+		},
+		{
+			name:    "single backtick",
+			content: "use `foo` here",
+			want:    "```",
+		},
+		{
+			name:    "triple backticks",
+			content: "```go\nfmt.Println()\n```",
+			want:    "````",
+		},
+		{
+			name:    "triple backticks in middle",
+			content: "before\n```\ncode\n```\nafter",
+			want:    "````",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got := codeFence(tt.content)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("codeFence() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestRender(t *testing.T) {
 	t.Parallel()
 	t.Run("unknown type returns error", func(t *testing.T) {
@@ -176,6 +215,15 @@ func TestRenderFile_DetailsTag(t *testing.T) {
 				Content: "hello",
 			},
 			want: "hello",
+		},
+		{
+			name: "content with triple backticks uses four backtick fence",
+			result: &TemplateInput{
+				Content:   "```go\nfmt.Println()\n```\n",
+				CodeBlock: true,
+				Language:  "markdown",
+			},
+			want: "````markdown\n```go\nfmt.Println()\n```\n````",
 		},
 	}
 	for _, tt := range tests {

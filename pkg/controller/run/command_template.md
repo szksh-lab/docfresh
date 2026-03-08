@@ -1,15 +1,15 @@
 {{if .Command -}}
-```{{.CommandLanguage | default "sh"}}
+{{codeFence .Command}}{{.CommandLanguage | default "sh"}}
 {{trimSuffix "\n" .Command}}
-```
+{{codeFence .Command}}
 {{- else if .EmbedScript -}}
-```{{.CommandLanguage | default "sh"}}
+{{codeFence .Content}}{{.CommandLanguage | default "sh"}}
 {{trimSuffix "\n" .Content}}
-```
+{{codeFence .Content}}
 {{- else -}}
-```{{.CommandLanguage | default "sh"}}
+{{codeFence .Script}}{{.CommandLanguage | default "sh"}}
 {{join " " .Shell}} {{trimSuffix "\n" .Script}}
-```
+{{codeFence .Script}}
 {{- end}}
 
 {{if not .Quiet -}}
@@ -18,9 +18,9 @@
 <summary>{{.DetailsTagSummary}}</summary>
 
 {{if .CodeBlock -}}
-```{{.OutputLanguage}}
+{{codeFence .CombinedOutput}}{{.OutputLanguage}}
 {{trimSuffix "\n" .CombinedOutput}}
-```
+{{codeFence .CombinedOutput}}
 {{- else -}}
 {{trimSuffix "\n" .CombinedOutput}}
 {{- end}}
@@ -30,9 +30,9 @@
 {{if .CodeBlock -}}
 Output:
 
-```{{.OutputLanguage}}
+{{codeFence .CombinedOutput}}{{.OutputLanguage}}
 {{trimSuffix "\n" .CombinedOutput}}
-```
+{{codeFence .CombinedOutput}}
 {{- else -}}
 {{trimSuffix "\n" .CombinedOutput}}
 {{- end}}

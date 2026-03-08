@@ -98,7 +98,8 @@ func renderFile(tpl *Template, result *TemplateInput) (string, error) {
 		if !strings.HasSuffix(result.Content, "\n") {
 			result.Content += "\n"
 		}
-		s = "```" + result.Language + "\n" + result.Content + "```"
+		fence := codeFence(result.Content)
+		s = fence + result.Language + "\n" + result.Content + fence
 	}
 	if result.DetailsTagSummary != "" {
 		s = wrapDetailsTag(s, result.DetailsTagSummary)
@@ -123,6 +124,13 @@ func defaultDetailsTagSummary(result *TemplateInput) string {
 	default:
 		return "Output"
 	}
+}
+
+func codeFence(content string) string {
+	if strings.Contains(content, "```") {
+		return "````"
+	}
+	return "```"
 }
 
 func wrapDetailsTag(content, summary string) string {

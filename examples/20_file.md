@@ -92,3 +92,17 @@ code_block: true
 
 </details>
 <!-- docfresh end -->
+
+## Four backticks are used when the content includes three backticks
+
+<!-- docfresh begin
+file:
+  path: file/three_backticks.md
+code_block: true
+-->
+````md
+```
+3 backticks
+```
+````
+<!-- docfresh end -->

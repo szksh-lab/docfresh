@@ -14,6 +14,7 @@ func txtFuncMap() template.FuncMap {
 	delete(fncs, "env")
 	delete(fncs, "expandenv")
 	delete(fncs, "getHostByName")
+	fncs["codeFence"] = codeFence
 	return fncs
 }
 
