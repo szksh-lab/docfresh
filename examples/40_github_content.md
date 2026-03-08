@@ -54,7 +54,7 @@ github_content:
   path: .gitignore
   ref: main
 details_tag: {}
-use_fenced_code_block_for_output: true
+code_block: true
 -->
 <details>
 <summary>suzuki-shunsuke/docfresh/.gitignore@main</summary>
