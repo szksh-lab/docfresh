@@ -33,6 +33,10 @@
           "$ref": "#/$defs/Template",
           "description": "Customize the template"
         },
+        "transform": {
+          "$ref": "#/$defs/Transform",
+          "description": "Preprocess template variables before rendering. Each field is a Go text/template string that transforms the corresponding variable."
+        },
         "code_block": {
           "type": "boolean",
           "description": "If this is true, the content is wrapped using markdown's fenced code block"
@@ -300,6 +304,28 @@
         "delims": {
           "$ref": "#/$defs/Delims",
           "description": "The delimiters. The default delimiters are '{{' and '}}'"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Transform": {
+      "properties": {
+        "Content": {
+          "type": "string",
+          "description": "A Go text/template to transform .Content before rendering"
+        },
+        "Stdout": {
+          "type": "string",
+          "description": "A Go text/template to transform .Stdout before rendering"
+        },
+        "Stderr": {
+          "type": "string",
+          "description": "A Go text/template to transform .Stderr before rendering"
+        },
+        "CombinedOutput": {
+          "type": "string",
+          "description": "A Go text/template to transform .CombinedOutput before rendering"
         }
       },
       "additionalProperties": false,
