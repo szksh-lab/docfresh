@@ -115,10 +115,37 @@ https://github.com/suzuki-shunsuke/docfresh/blob/8df6bbf991279c8d8fafa99b5acc4b2
 
 ## Security
 
-docfresh may execute arbitrary external commands defined in templates. Therefore, it is important to take appropriate security precautions.
+docfresh may execute arbitrary external commands defined in templates.
+Therefore, it is important to take appropriate security precautions.
 Running docfresh on untrusted templates can be dangerous.
 It is recommended to execute docfresh in an isolated environment such as a container.
 Secrets should not be provided unless absolutely necessary.
+
+## Running in CI
+
+Running docfresh in CI helps prevent differences in generated results caused by variations in the execution environment.
+It also enables quick detection of problems and prevents documentation from becoming inconsistent or outdated.
+When running in CI, there are two possible approaches:
+
+1. Fail CI if the documentation is updated.
+2. Automatically update the documentation in CI.
+
+Approach 2 generally reduces the maintenance burden.
+For automatic updates:
+
+- For public repositories, [autofix.ci](https://autofix.ci/) is convenient.
+- For private repositories, [Securefix Action](https://github.com/csm-actions/securefix-action) is useful.
+
+When running docfresh in CI, you may also want to restrict its execution to prevent arbitrary code execution from malicious PRs.
+
+e.g.
+
+- Restrict by PR author
+- Restrict by `github.actor`
+- Disable execution for PRs from forks
+
+However, for `pull_request` events from forks, secrets cannot be accessed and `secrets.GITHUB_TOKEN` only has read permissions. Therefore, the risk is relatively limited, so excessive restrictions may not be necessary.
+On the other hand, running docfresh with `pull_request_target` or `workflow_run` events in public repositories can be dangerous and should generally be avoided.
 
 ## Template Syntax
 
