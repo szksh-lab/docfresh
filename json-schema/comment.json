@@ -101,6 +101,24 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "Delims": {
+      "properties": {
+        "left": {
+          "type": "string",
+          "description": "The left delimiter of templates"
+        },
+        "right": {
+          "type": "string",
+          "description": "The right delimiter of templates"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "left",
+        "right"
+      ]
+    },
     "File": {
       "properties": {
         "path": {
@@ -208,6 +226,10 @@
         "vars": {
           "type": "object",
           "description": "Variables which are passed to template. They can be referred in templates as .Vars.\u003cvariable name\u003e"
+        },
+        "delims": {
+          "$ref": "#/$defs/Delims",
+          "description": "The delimiters. The default delimiters are '{{' and '}}'"
         }
       },
       "additionalProperties": false,
@@ -218,6 +240,10 @@
         "vars": {
           "type": "object",
           "description": "Variables which are passed to template. They can be referred in templates as .Vars.\u003cvariable name\u003e"
+        },
+        "delims": {
+          "$ref": "#/$defs/Delims",
+          "description": "The delimiters. The default delimiters are '{{' and '}}'"
         }
       },
       "additionalProperties": false,

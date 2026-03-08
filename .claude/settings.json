@@ -27,6 +27,8 @@
       "Bash(go build:*)",
       "Bash(go list:*)",
       "Bash(go mod tidy:*)",
+      "Bash(go run ./cmd/gen-jsonschema)",
+      "Bash(go run ./cmd/gen-jsonschema/main.go)",
       "Bash(go test:*)",
       "Bash(go vet:*)",
       "Bash(golangci-lint:*)",

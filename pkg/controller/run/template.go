@@ -43,7 +43,11 @@ func getTemplate(fs afero.Fs, tpls *Templates, block *Block, file string) (*Temp
 		}
 		content = string(b)
 	}
-	tpl, err := template.New("_").Funcs(tpls.Funcs).Parse(content)
+	t := template.New("_").Funcs(tpls.Funcs)
+	if d := block.Input.Template.Delims; d != nil {
+		t = t.Delims(d.Left, d.Right)
+	}
+	tpl, err := t.Parse(content)
 	if err != nil {
 		return nil, fmt.Errorf("parse block template: %w", err)
 	}
@@ -53,9 +57,13 @@ func getTemplate(fs afero.Fs, tpls *Templates, block *Block, file string) (*Temp
 	}, nil
 }
 
-func renderTemplate(content string, result *TemplateInput) error {
+func renderTemplate(content string, result *TemplateInput, delims *Delims) error {
 	fns := txtFuncMap()
-	tpl, err := template.New("_").Funcs(fns).Parse(content)
+	t := template.New("_").Funcs(fns)
+	if delims != nil {
+		t = t.Delims(delims.Left, delims.Right)
+	}
+	tpl, err := t.Parse(content)
 	if err != nil {
 		return fmt.Errorf("parse file template: %w", err)
 	}
