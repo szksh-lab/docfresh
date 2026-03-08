@@ -40,7 +40,7 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	if err != nil {
 		return "", fmt.Errorf("execute a command: %w", err)
 	}
-	result.UseFencedCodeBlockForOutput = block.Input.GetUseFencedCodeBlockForOutput()
+	result.CodeBlock = block.Input.GetCodeBlock()
 	if dt := block.Input.DetailsTag; dt != nil {
 		summary := dt.Summary
 		if summary == "" {
@@ -89,7 +89,7 @@ func renderFile(tpl *Template, result *TemplateInput) (string, error) {
 		if err != nil {
 			return "", err
 		}
-	case !result.UseFencedCodeBlockForOutput:
+	case !result.CodeBlock:
 		s = result.Content
 	default:
 		if !strings.HasSuffix(result.Content, "\n") {

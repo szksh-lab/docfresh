@@ -17,7 +17,7 @@
 <details>
 <summary>{{.DetailsTagSummary}}</summary>
 
-{{if .UseFencedCodeBlockForOutput -}}
+{{if .CodeBlock -}}
 ```
 {{trimSuffix "\n" .CombinedOutput}}
 ```
@@ -27,7 +27,7 @@
 
 </details>
 {{- else -}}
-{{if .UseFencedCodeBlockForOutput -}}
+{{if .CodeBlock -}}
 Output:
 
 ```

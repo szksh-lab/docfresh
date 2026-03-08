@@ -33,7 +33,7 @@
           "$ref": "#/$defs/Template",
           "description": "Customize the template"
         },
-        "use_fenced_code_block_for_output": {
+        "code_block": {
           "type": "boolean",
           "description": "If this is true, the content is wrapped using markdown's fenced code block"
         },

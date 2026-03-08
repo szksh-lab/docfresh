@@ -142,7 +142,7 @@ Hello
 <!-- docfresh begin
 file:
   path: ../pkg/controller/run/languages.yaml
-use_fenced_code_block_for_output: true
+code_block: true
 -->
 ```yaml
 go:

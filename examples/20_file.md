@@ -9,12 +9,12 @@ This is read from foo.md
 
 ## Wrap the file content with Fenced Code Block
 
-If `use_fenced_code_block_for_output` is true, the file content is wrapped with Fenced Code Block.
+If `code_block` is true, the file content is wrapped with Fenced Code Block.
 
 <!-- docfresh begin
 file:
   path: file/create-index.sh
-use_fenced_code_block_for_output: true
+code_block: true
 -->
 ```sh
 #!/usr/bin/env bash
@@ -41,7 +41,7 @@ file:
   range:
     start: 2
     end: 4
-use_fenced_code_block_for_output: true
+code_block: true
 -->
 ```md
 3
@@ -56,7 +56,7 @@ file:
   path: file/range.md
   range:
     start: -2
-use_fenced_code_block_for_output: true
+code_block: true
 -->
 ```md
 9
@@ -72,7 +72,7 @@ use_fenced_code_block_for_output: true
 file:
   path: file/range.md
 details_tag: {}
-use_fenced_code_block_for_output: true
+code_block: true
 -->
 <details>
 <summary>file/range.md</summary>

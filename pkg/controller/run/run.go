@@ -107,24 +107,24 @@ type Block struct {
 }
 
 type BlockInput struct {
-	PreCommand                  *Command       `json:"pre_command,omitempty" yaml:"pre_command" jsonschema_description:"Execute external commands before the action like command, file, http, and github_content. If it fails, docfresh fails and the action isn't run. The command and output are outputted to the console but the result isn't affected to the document. This is used for setup and checking the requirement"`
-	PostCommand                 *Command       `json:"post_command,omitempty" yaml:"post_command" jsonschema_description:"Execute external commands after the action like command, file, http, and github_content. If it fails, docfresh fails. The command and output are outputted to the console but the result isn't affected to the document. This is used for testing the action result and cleaning up. post_command is run even if pre_command and action fail."`
-	Command                     *Command       `json:"command,omitempty" jsonschema_description:"Execute the external command and embed the result to documents"`
-	File                        *File          `json:"file,omitempty" jsonschema_description:"Read a local file and embed the content to documents"`
-	HTTP                        *HTTP          `json:"http,omitempty" jsonschema_description:"Call a HTTP request and embed the response to documents"`
-	GitHubContent               *GitHubContent `json:"github_content,omitempty" yaml:"github_content" jsonschema_description:"Fetch a file by GitHub Contents API and embed it into documents"`
-	Template                    *Template      `json:"template,omitempty" jsonschema_description:"Customize the template"`
-	UseFencedCodeBlockForOutput *bool          `json:"use_fenced_code_block_for_output,omitempty" yaml:"use_fenced_code_block_for_output" jsonschema_description:"If this is true, the content is wrapped using markdown's fenced code block"`
-	DetailsTag                  *DetailsTag    `json:"details_tag,omitempty" yaml:"details_tag" jsonschema_description:"Wrap the output in an HTML details tag"`
+	PreCommand    *Command       `json:"pre_command,omitempty" yaml:"pre_command" jsonschema_description:"Execute external commands before the action like command, file, http, and github_content. If it fails, docfresh fails and the action isn't run. The command and output are outputted to the console but the result isn't affected to the document. This is used for setup and checking the requirement"`
+	PostCommand   *Command       `json:"post_command,omitempty" yaml:"post_command" jsonschema_description:"Execute external commands after the action like command, file, http, and github_content. If it fails, docfresh fails. The command and output are outputted to the console but the result isn't affected to the document. This is used for testing the action result and cleaning up. post_command is run even if pre_command and action fail."`
+	Command       *Command       `json:"command,omitempty" jsonschema_description:"Execute the external command and embed the result to documents"`
+	File          *File          `json:"file,omitempty" jsonschema_description:"Read a local file and embed the content to documents"`
+	HTTP          *HTTP          `json:"http,omitempty" jsonschema_description:"Call a HTTP request and embed the response to documents"`
+	GitHubContent *GitHubContent `json:"github_content,omitempty" yaml:"github_content" jsonschema_description:"Fetch a file by GitHub Contents API and embed it into documents"`
+	Template      *Template      `json:"template,omitempty" jsonschema_description:"Customize the template"`
+	CodeBlock     *bool          `json:"code_block,omitempty" yaml:"code_block" jsonschema_description:"If this is true, the content is wrapped using markdown's fenced code block"`
+	DetailsTag    *DetailsTag    `json:"details_tag,omitempty" yaml:"details_tag" jsonschema_description:"Wrap the output in an HTML details tag"`
 }
 
 type DetailsTag struct {
 	Summary string `json:"summary,omitempty" jsonschema_description:"The summary text. Defaults: 'Output' for commands, file path for file, URL for http, '<owner>/<repo>/<path>[@<ref>]' for github_content."`
 }
 
-func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
-	if b.UseFencedCodeBlockForOutput != nil {
-		return *b.UseFencedCodeBlockForOutput
+func (b *BlockInput) GetCodeBlock() bool {
+	if b.CodeBlock != nil {
+		return *b.CodeBlock
 	}
 	if b.Command != nil {
 		return true
@@ -285,8 +285,8 @@ type TemplateInput struct {
 	// template variables
 	Vars map[string]any
 	//
-	EmbedScript                 bool
-	UseFencedCodeBlockForOutput bool
-	Quiet                       bool
-	DetailsTagSummary           string
+	EmbedScript       bool
+	CodeBlock         bool
+	Quiet             bool
+	DetailsTagSummary string
 }

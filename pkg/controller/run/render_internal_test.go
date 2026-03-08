@@ -111,9 +111,9 @@ func TestRenderFile_DetailsTag(t *testing.T) {
 		{
 			name: "fenced code block with details tag",
 			result: &TemplateInput{
-				Content:                     "hello\n",
-				UseFencedCodeBlockForOutput: true,
-				DetailsTagSummary:           "Summary",
+				Content:           "hello\n",
+				CodeBlock:         true,
+				DetailsTagSummary: "Summary",
 			},
 			want: "<details>\n<summary>Summary</summary>\n\n```\nhello\n```\n\n</details>",
 		},
