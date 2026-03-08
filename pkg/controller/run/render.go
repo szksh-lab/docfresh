@@ -43,6 +43,9 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	if err != nil {
 		return "", fmt.Errorf("execute a command: %w", err)
 	}
+	if err := applyTransform(block.Input.Transform, result); err != nil {
+		return "", fmt.Errorf("apply transform: %w", err)
+	}
 	result.CodeBlock = block.Input.GetCodeBlock()
 	if dt := block.Input.DetailsTag; dt != nil {
 		summary := dt.Summary

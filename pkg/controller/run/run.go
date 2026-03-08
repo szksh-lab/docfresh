@@ -121,8 +121,16 @@ type BlockInput struct {
 	HTTP          *HTTP          `json:"http,omitempty" jsonschema_description:"Call a HTTP request and embed the response to documents"`
 	GitHubContent *GitHubContent `json:"github_content,omitempty" yaml:"github_content" jsonschema_description:"Fetch a file by GitHub Contents API and embed it into documents"`
 	Template      *Template      `json:"template,omitempty" jsonschema_description:"Customize the template"`
+	Transform     *Transform     `json:"transform,omitempty" jsonschema_description:"Preprocess template variables before rendering. Each field is a Go text/template string that transforms the corresponding variable."`
 	CodeBlock     *bool          `json:"code_block,omitempty" yaml:"code_block" jsonschema_description:"If this is true, the content is wrapped using markdown's fenced code block"`
 	DetailsTag    *DetailsTag    `json:"details_tag,omitempty" yaml:"details_tag" jsonschema_description:"Wrap the output in an HTML details tag"`
+}
+
+type Transform struct {
+	Content        string `json:"Content,omitempty" yaml:"Content" jsonschema_description:"A Go text/template to transform .Content before rendering"`
+	Stdout         string `json:"Stdout,omitempty" yaml:"Stdout" jsonschema_description:"A Go text/template to transform .Stdout before rendering"`
+	Stderr         string `json:"Stderr,omitempty" yaml:"Stderr" jsonschema_description:"A Go text/template to transform .Stderr before rendering"`
+	CombinedOutput string `json:"CombinedOutput,omitempty" yaml:"CombinedOutput" jsonschema_description:"A Go text/template to transform .CombinedOutput before rendering"`
 }
 
 type DetailsTag struct {
