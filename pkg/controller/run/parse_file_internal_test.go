@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestParseFile(t *testing.T) { //nolint:funlen
+func TestParseFile(t *testing.T) { //nolint:funlen,maintidx
 	t.Parallel()
 
 	tests := []struct {
@@ -41,6 +41,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo hello",
 						},
 					},
+					LineNumber: 2,
 				},
 				{Type: "text", Content: "\nafter\n"},
 			},
@@ -59,6 +60,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo one",
 						},
 					},
+					LineNumber: 2,
 				},
 				{Type: "text", Content: "\nmiddle\n"},
 				{
@@ -71,6 +73,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Shell:   []string{"sh", "-c"},
 						},
 					},
+					LineNumber: 9,
 				},
 				{Type: "text", Content: "\n"},
 			},
@@ -116,6 +119,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo hi",
 						},
 					},
+					LineNumber: 4,
 				},
 				{Type: "text", Content: "\n"},
 			},
@@ -148,6 +152,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo real",
 						},
 					},
+					LineNumber: 2,
 				},
 				{Type: "text", Content: "\n"},
 			},
@@ -166,6 +171,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo real",
 						},
 					},
+					LineNumber: 10,
 				},
 				{Type: "text", Content: "\n"},
 			},
@@ -183,6 +189,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo cleanup",
 						},
 					},
+					LineNumber: 2,
 				},
 				{Type: "text", Content: "\nafter\n"},
 			},
@@ -199,6 +206,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo first",
 						},
 					},
+					LineNumber: 1,
 				},
 				{Type: "text", Content: "\n"},
 				{
@@ -209,6 +217,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo second",
 						},
 					},
+					LineNumber: 4,
 				},
 				{Type: "text", Content: "\n"},
 			},
@@ -225,6 +234,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo cleanup",
 						},
 					},
+					LineNumber: 1,
 				},
 				{Type: "text", Content: "\n"},
 				{
@@ -236,6 +246,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 							Command: "echo hello",
 						},
 					},
+					LineNumber: 4,
 				},
 				{Type: "text", Content: "\n"},
 			},

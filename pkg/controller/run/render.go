@@ -36,6 +36,9 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	if err := c.runPreCommand(ctx, logger, file, block); err != nil {
 		return "", fmt.Errorf("execute pre_command: %w", err)
 	}
+	if block.Input.Command != nil {
+		fmt.Fprintf(c.stderr, "> command %s:%d\n", file, block.LineNumber)
+	}
 	result, err := c.exec(ctx, logger, file, block.Input)
 	if err != nil {
 		return "", fmt.Errorf("execute a command: %w", err)

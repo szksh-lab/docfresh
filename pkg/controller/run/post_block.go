@@ -7,6 +7,7 @@ import (
 )
 
 func (c *Controller) runPostBlock(ctx context.Context, logger *slog.Logger, _ *Templates, file string, block *Block) error {
+	fmt.Fprintf(c.stderr, "> post_comment %s:%d\n", file, block.LineNumber)
 	result, err := c.execCommand(ctx, logger, file, block.Input.Command)
 	if err != nil {
 		return fmt.Errorf("execute post block command: %w", err)

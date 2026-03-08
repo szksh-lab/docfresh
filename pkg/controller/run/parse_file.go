@@ -14,6 +14,11 @@ const (
 	postMarker  = "<!-- docfresh post"
 )
 
+// lineNumber returns the 1-based line number for the given byte position in content.
+func lineNumber(content string, pos int) int {
+	return strings.Count(content[:pos], "\n") + 1
+}
+
 // parseFile parses a file and returns a list of blocks.
 func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen
 	codeBlocks := findCodeBlockRanges(content)
@@ -37,6 +42,7 @@ func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen
 			if err != nil {
 				return nil, err
 			}
+			block.LineNumber = lineNumber(content, pos+postIdx)
 			if postIdx > 0 {
 				blocks = appendText(blocks, content[pos:pos+postIdx])
 			}
@@ -92,6 +98,7 @@ func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen
 			Input:        &input,
 			BeginComment: beginComment,
 			EndComment:   endComment,
+			LineNumber:   lineNumber(content, beginStart),
 		})
 
 		pos = endCommentEnd

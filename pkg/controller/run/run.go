@@ -60,6 +60,7 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 	var postBlocks []*Block
 	defer func() {
 		for i := len(postBlocks) - 1; i >= 0; i-- {
+			logger := logger.With("line_number", postBlocks[i].LineNumber)
 			if err := c.runPostBlock(ctx, logger, tpls, file, postBlocks[i]); err != nil {
 				if gErr == nil {
 					gErr = err
@@ -72,6 +73,11 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 
 	var contentBuilder strings.Builder
 	for _, block := range blocks {
+		if block.Type == "text" {
+			contentBuilder.WriteString(block.Content)
+			continue
+		}
+		logger := logger.With("line_number", block.LineNumber)
 		if block.Type == "post" {
 			contentBuilder.WriteString(block.Content)
 			postBlocks = append(postBlocks, block)
@@ -104,6 +110,7 @@ type Block struct {
 	Input        *BlockInput
 	BeginComment string
 	EndComment   string
+	LineNumber   int // 1-based line number of the begin/post marker
 }
 
 type BlockInput struct {
