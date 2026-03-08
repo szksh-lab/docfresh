@@ -13,11 +13,12 @@ func (c *Controller) readFile(baseFile string, file *File) (*TemplateInput, erro
 	if err != nil {
 		return nil, fmt.Errorf("read file: %w", err)
 	}
-	ext := filepath.Ext(p)
-	lang, ok := c.langs[ext]
-	sl := ""
-	if ok {
-		sl = lang.Language
+	sl := file.Language
+	if sl == "" {
+		ext := filepath.Ext(p)
+		if lang, ok := c.langs[ext]; ok {
+			sl = lang.Language
+		}
 	}
 	content := string(b)
 	content, err = extractRange(content, file.Range)

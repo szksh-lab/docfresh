@@ -27,6 +27,27 @@ typ = "typ"
 ```
 <!-- docfresh end -->
 
+## Specify the language explictly
+
+If `code_block` is true, the language is automatically deteced by the file extension of the URL path.
+You can specify the language explictly by `language`.
+
+<!-- docfresh begin
+http:
+  url: https://jsonplaceholder.typicode.com/todos/1
+  language: json
+code_block: true
+-->
+```json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+```
+<!-- docfresh end -->
+
 ## timeout, header
 
 You can set the timeout and header.

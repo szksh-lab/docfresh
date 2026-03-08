@@ -181,6 +181,7 @@ type GitHubContent struct {
 	Range    *Range        `json:"range,omitempty" jsonschema_description:"Extract a specific range of lines from the content. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."`
 	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the file content is rendered as template rather than plain text."`
 	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
+	Language string        `json:"language,omitempty" jsonschema_description:"Language of the content. This is used for markdown's fenced code block. This is automatically detected from the file extension by default"`
 }
 
 type Delims struct {
@@ -210,6 +211,7 @@ type HTTP struct {
 	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the response. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
 	Timeout  int           `json:"timeout,omitempty" jsonschema_description:"HTTP request timeout (seconds). The default value is 5 seconds. If the value is negative, timeout isn't set"`
 	Header   http.Header   `json:"header,omitempty" jsonschema_description:"HTTP request header."`
+	Language string        `json:"language,omitempty" jsonschema_description:"Language of the response. This is used for markdown's fenced code block. This is automatically detected from the URL by default"`
 }
 
 type File struct {
@@ -217,6 +219,7 @@ type File struct {
 	Range    *Range        `json:"range,omitempty" jsonschema_description:"Extract a specific range of lines from the file. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."`
 	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the file is rendered as template rather than plain text."`
 	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
+	Language string        `json:"language,omitempty" jsonschema_description:"Language of the file. This is used for markdown's fenced code block. This is automatically detected from the file extension by default"`
 }
 
 type Command struct {

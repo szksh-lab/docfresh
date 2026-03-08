@@ -150,6 +150,10 @@
         "test": {
           "type": "string",
           "description": "Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language of the file. This is used for markdown's fenced code block. This is automatically detected from the file extension by default"
         }
       },
       "additionalProperties": false,
@@ -187,6 +191,10 @@
         "test": {
           "type": "string",
           "description": "Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language of the content. This is used for markdown's fenced code block. This is automatically detected from the file extension by default"
         }
       },
       "additionalProperties": false,
@@ -222,6 +230,10 @@
         "header": {
           "$ref": "#/$defs/Header",
           "description": "HTTP request header."
+        },
+        "language": {
+          "type": "string",
+          "description": "Language of the response. This is used for markdown's fenced code block. This is automatically detected from the URL by default"
         }
       },
       "additionalProperties": false,

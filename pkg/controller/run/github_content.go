@@ -3,6 +3,7 @@ package run
 import (
 	"context"
 	"fmt"
+	"path"
 )
 
 func (c *Controller) getGitHubContent(ctx context.Context, content *GitHubContent) (*TemplateInput, error) {
@@ -14,12 +15,19 @@ func (c *Controller) getGitHubContent(ctx context.Context, content *GitHubConten
 	if err != nil {
 		return nil, fmt.Errorf("extract range from github content: %w", err)
 	}
+	sl := content.Language
+	if sl == "" {
+		if lang, ok := c.langs[path.Ext(content.Path)]; ok {
+			sl = lang.Language
+		}
+	}
 	return &TemplateInput{
-		Type:    "github-content",
-		Content: s,
-		Owner:   content.Owner,
-		Repo:    content.Repo,
-		Path:    content.Path,
-		Ref:     content.Ref,
+		Type:     "github-content",
+		Content:  s,
+		Owner:    content.Owner,
+		Repo:     content.Repo,
+		Path:     content.Path,
+		Ref:      content.Ref,
+		Language: sl,
 	}, nil
 }
