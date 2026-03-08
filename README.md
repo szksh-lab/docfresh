@@ -66,6 +66,7 @@ template:
 - [Fetch files by GitHub Contents API](examples/40_github_content.md)
 - [Customize Template](examples/50-template.md)
 - [Test Command Results And Fetched File Contents](examples/60-test.md)
+- [post (cleanup)](examples/70-post.md)
 <!-- docfresh end -->
 
 ## Motivation

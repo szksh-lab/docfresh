@@ -170,6 +170,88 @@ func TestParseFile(t *testing.T) { //nolint:funlen
 				{Type: "text", Content: "\n"},
 			},
 		},
+		{
+			name:    "single post comment",
+			content: "before\n<!-- docfresh post\ncommand: echo cleanup\n-->\nafter\n",
+			want: []*Block{
+				{Type: "text", Content: "before\n"},
+				{
+					Type:    "post",
+					Content: "<!-- docfresh post\ncommand: echo cleanup\n-->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo cleanup",
+						},
+					},
+				},
+				{Type: "text", Content: "\nafter\n"},
+			},
+		},
+		{
+			name:    "multiple post comments",
+			content: "<!-- docfresh post\ncommand: echo first\n-->\n<!-- docfresh post\ncommand: echo second\n-->\n",
+			want: []*Block{
+				{
+					Type:    "post",
+					Content: "<!-- docfresh post\ncommand: echo first\n-->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo first",
+						},
+					},
+				},
+				{Type: "text", Content: "\n"},
+				{
+					Type:    "post",
+					Content: "<!-- docfresh post\ncommand: echo second\n-->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo second",
+						},
+					},
+				},
+				{Type: "text", Content: "\n"},
+			},
+		},
+		{
+			name:    "post comment mixed with begin/end blocks",
+			content: "<!-- docfresh post\ncommand: echo cleanup\n-->\n<!-- docfresh begin\ncommand:\n  command: echo hello\n-->\nold\n<!-- docfresh end -->\n", //nolint:dupword
+			want: []*Block{
+				{
+					Type:    "post",
+					Content: "<!-- docfresh post\ncommand: echo cleanup\n-->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo cleanup",
+						},
+					},
+				},
+				{Type: "text", Content: "\n"},
+				{
+					Type:         "block",
+					BeginComment: "<!-- docfresh begin\ncommand:\n  command: echo hello\n-->", //nolint:dupword
+					EndComment:   "<!-- docfresh end -->",
+					Input: &BlockInput{
+						Command: &Command{
+							Command: "echo hello",
+						},
+					},
+				},
+				{Type: "text", Content: "\n"},
+			},
+		},
+		{
+			name:    "post comment inside code block is ignored",
+			content: "```\n<!-- docfresh post\ncommand: echo cleanup\n-->\n```\nafter\n",
+			want: []*Block{
+				{Type: "text", Content: "```\n<!-- docfresh post\ncommand: echo cleanup\n-->\n```\nafter\n"},
+			},
+		},
+		{
+			name:    "unclosed post comment",
+			content: "<!-- docfresh post\ncommand: echo cleanup\n",
+			wantErr: "unclosed <!-- docfresh post comment: missing -->",
+		},
 	}
 
 	for _, tt := range tests {
