@@ -27,16 +27,15 @@ typ = "typ"
 ```
 <!-- docfresh end -->
 
-## Specify the language explicitly
+### Automatic detection of JSON language
 
-If `code_block` is true, the language is automatically detected by the file extension of the URL path.
-You can specify the language explicitly by `language`.
+If the URL path doesn't have the file extension, docfresh checks if the response body is JSON.
+If the body is JSON, the language is `json` by default.
 
 <!-- docfresh begin
+code_block: true
 http:
   url: https://jsonplaceholder.typicode.com/todos/1
-  language: json
-code_block: true
 -->
 ```json
 {
@@ -45,6 +44,22 @@ code_block: true
   "title": "delectus aut autem",
   "completed": false
 }
+```
+<!-- docfresh end -->
+
+### Specify the language explicitly
+
+If `code_block` is true, the language is automatically detected by the file extension of the URL path.
+You can specify the language explicitly by `language`.
+
+<!-- docfresh begin
+http:
+  url: https://gist.githubusercontent.com/suzuki-shunsuke/7913edb4499fb83bfe86d99c6a2bd42d/raw/52ad913ccbc5ed1af00501175e78b8940768c8d1/docfresh-test-data
+  language: yaml
+code_block: true
+-->
+```yaml
+name: foo
 ```
 <!-- docfresh end -->
 
@@ -61,7 +76,7 @@ http:
     Content-Type:
       - application/json
 -->
-```
+```json
 {
   "userId": 1,
   "id": 1,
@@ -88,7 +103,7 @@ code_block: true
 <details>
 <summary>https://jsonplaceholder.typicode.com/todos/1</summary>
 
-```
+```json
 {
   "userId": 1,
   "id": 1,

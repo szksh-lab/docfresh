@@ -2,6 +2,7 @@ package run
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -43,6 +44,9 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 	sl := h.Language
 	if sl == "" {
 		sl = c.languageFromURL(h.URL)
+	}
+	if sl == "" && json.Valid(b) {
+		sl = "json"
 	}
 
 	content := string(b)
