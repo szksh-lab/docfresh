@@ -125,6 +125,10 @@
           "type": "string",
           "description": "The file path. It's an absolute path or relative path from the current file."
         },
+        "range": {
+          "$ref": "#/$defs/Range",
+          "description": "Extract a specific range of lines from the file. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."
+        },
         "template": {
           "$ref": "#/$defs/TemplateData",
           "description": "If this is set, the file is rendered as template rather than plain text."
@@ -158,6 +162,10 @@
           "type": "string",
           "description": "The path of GitHub Contents API"
         },
+        "range": {
+          "$ref": "#/$defs/Range",
+          "description": "Extract a specific range of lines from the content. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."
+        },
         "template": {
           "$ref": "#/$defs/TemplateData",
           "description": "If this is set, the file content is rendered as template rather than plain text."
@@ -180,6 +188,10 @@
         "url": {
           "type": "string",
           "description": "URL for HTTP request"
+        },
+        "range": {
+          "$ref": "#/$defs/Range",
+          "description": "Extract a specific range of lines from the response. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."
         },
         "template": {
           "$ref": "#/$defs/TemplateData",
@@ -211,6 +223,20 @@
         },
         "type": "array"
       },
+      "type": "object"
+    },
+    "Range": {
+      "properties": {
+        "start": {
+          "type": "integer",
+          "description": "Start line number (0-based, inclusive). Default: 0. Negative values count from the end."
+        },
+        "end": {
+          "type": "integer",
+          "description": "End line number (0-based, exclusive). Default: total line count. Negative values count from the end."
+        }
+      },
+      "additionalProperties": false,
       "type": "object"
     },
     "Template": {

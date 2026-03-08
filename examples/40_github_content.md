@@ -38,3 +38,7 @@ If you use [ghtkn](https://github.com/suzuki-shunsuke/ghtkn), you can pass an ac
 ```sh
 export DOCFRESH_GHTKN_ENABLED=true
 ```
+
+## Range
+
+Please see [file#Range](20_file.md#range).

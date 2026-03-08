@@ -49,3 +49,7 @@ http:
 }
 ```
 <!-- docfresh end -->
+
+## Range
+
+Please see [file#Range](20_file.md#range).

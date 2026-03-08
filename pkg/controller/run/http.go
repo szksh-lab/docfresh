@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, error) {
+func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, error) { //nolint:cyclop
 	if h.Timeout == 0 {
 		h.Timeout = 5
 	}
@@ -43,6 +43,10 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 	sl := c.scriptLanguageFromURL(h.URL)
 
 	content := string(b)
+	content, err = extractRange(content, h.Range)
+	if err != nil {
+		return nil, fmt.Errorf("extract range from http response: %w", err)
+	}
 	result := &TemplateInput{
 		Type:           "http",
 		URL:            h.URL,
