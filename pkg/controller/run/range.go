@@ -6,8 +6,8 @@ import (
 )
 
 type Range struct {
-	Start *int `json:"start,omitempty" yaml:"start" jsonschema_description:"Start line number (0-based, inclusive). Default: 0. Negative values count from the end."`
-	End   *int `json:"end,omitempty" yaml:"end" jsonschema_description:"End line number (0-based, exclusive). Default: total line count. Negative values count from the end."`
+	Start *int `json:"start,omitempty" jsonschema_description:"Start line number (0-based, inclusive). Default: 0. Negative values count from the end."`
+	End   *int `json:"end,omitempty" jsonschema_description:"End line number (0-based, exclusive). Default: total line count. Negative values count from the end."`
 }
 
 func extractRange(content string, r *Range) (string, error) {
