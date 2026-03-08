@@ -40,7 +40,10 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 		return nil, fmt.Errorf("read response body: %w", err)
 	}
 
-	sl := c.languageFromURL(h.URL)
+	sl := h.Language
+	if sl == "" {
+		sl = c.languageFromURL(h.URL)
+	}
 
 	content := string(b)
 	content, err = extractRange(content, h.Range)
