@@ -44,11 +44,16 @@ func TestGetCommandDir(t *testing.T) {
 	}
 }
 
-func TestGetShell(t *testing.T) {
+func TestGetShell(t *testing.T) { //nolint:funlen
 	t.Parallel()
 	langs := map[string]*Language{
-		".py": {Shell: []string{"python3"}, Language: "py"},
-		".go": {Shell: []string{"go", "run"}, Language: "go"},
+		".py": {ScriptShell: []string{"python3"}, Language: "py"},
+		".go": {ScriptShell: []string{"go", "run"}, Language: "go"},
+	}
+	langsByName := map[string]*Language{
+		"js": {ScriptShell: []string{"node"}, CommandShell: []string{"node", "-e"}, Language: "js"},
+		"py": {ScriptShell: []string{"python3"}, CommandShell: []string{"python3", "-c"}, Language: "py"},
+		"go": {ScriptShell: []string{"go", "run"}, Language: "go"},
 	}
 	tests := []struct {
 		name    string
@@ -86,11 +91,36 @@ func TestGetShell(t *testing.T) {
 			command: &Command{Script: "run.unknown", EmbedScript: true},
 			wantErr: true,
 		},
+		{
+			name:    "command_language auto-detects command shell",
+			command: &Command{Command: "console.log('hello')", CommandLanguage: "js"},
+			want:    []string{"node", "-e"},
+		},
+		{
+			name:    "command_language auto-detects script shell",
+			command: &Command{Script: "hello.js", CommandLanguage: "js"},
+			want:    []string{"node"},
+		},
+		{
+			name:    "command_language with no command shell falls back to bash -c",
+			command: &Command{Command: "main()", CommandLanguage: "go"},
+			want:    []string{"bash", "-c"},
+		},
+		{
+			name:    "command_language with no script shell falls back to bash",
+			command: &Command{Script: "run.txt", CommandLanguage: "json"},
+			want:    []string{"bash"},
+		},
+		{
+			name:    "explicit shell overrides command_language",
+			command: &Command{Shell: []string{"zsh", "-c"}, CommandLanguage: "js"},
+			want:    []string{"zsh", "-c"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := getShell(tt.command, langs)
+			got, err := getShell(tt.command, langs, langsByName)
 			if tt.wantErr {
 				if err == nil {
 					t.Fatal("expected error but got nil")

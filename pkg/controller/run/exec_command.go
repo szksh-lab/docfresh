@@ -38,9 +38,26 @@ func getCommandDir(file string, command *Command) string {
 	return filepath.Join(filepath.Dir(file), command.Dir)
 }
 
-func getShell(command *Command, langs map[string]*Language) ([]string, error) {
+func shellFromLanguageName(command *Command, langsByName map[string]*Language) []string {
+	if command.CommandLanguage == "" {
+		return nil
+	}
+	lang, ok := langsByName[command.CommandLanguage]
+	if !ok {
+		return nil
+	}
+	if command.Script != "" {
+		return lang.ScriptShell
+	}
+	return lang.CommandShell
+}
+
+func getShell(command *Command, langs map[string]*Language, langsByName map[string]*Language) ([]string, error) {
 	if len(command.Shell) > 0 {
 		return command.Shell, nil
+	}
+	if shell := shellFromLanguageName(command, langsByName); len(shell) > 0 {
+		return shell, nil
 	}
 	if command.Script == "" {
 		return []string{"bash", "-c"}, nil
@@ -50,14 +67,14 @@ func getShell(command *Command, langs map[string]*Language) ([]string, error) {
 	}
 	ext := filepath.Ext(command.Script)
 	sl, ok := langs[ext]
-	if ok && sl.Shell != nil {
-		return sl.Shell, nil
+	if ok && len(sl.ScriptShell) > 0 {
+		return sl.ScriptShell, nil
 	}
 	return nil, errors.New("shell is required")
 }
 
 func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file string, command *Command) (*TemplateInput, error) {
-	shell, err := getShell(command, c.langs)
+	shell, err := getShell(command, c.langs, c.langsByName)
 	if err != nil {
 		return nil, fmt.Errorf("get command.shell: %w", err)
 	}

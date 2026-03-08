@@ -11,28 +11,34 @@ import (
 var languagesYAML []byte
 
 type ScriptLanguage struct {
-	Extensions []string
-	Shell      []string
+	Extensions   []string `yaml:"extensions"`
+	ScriptShell  []string `yaml:"script_shell"`
+	CommandShell []string `yaml:"command_shell"`
 }
 
 type Language struct {
-	Shell    []string
-	Language string
+	ScriptShell  []string
+	CommandShell []string
+	Language     string
 }
 
-func defaultScriptLanguages() (map[string]*Language, error) {
+func defaultScriptLanguages() (map[string]*Language, map[string]*Language, error) {
 	langs := map[string]*ScriptLanguage{}
 	if err := yaml.Unmarshal(languagesYAML, &langs); err != nil {
-		return nil, fmt.Errorf("unmrshal languages.yaml: %w", err)
+		return nil, nil, fmt.Errorf("unmrshal languages.yaml: %w", err)
 	}
-	ret := make(map[string]*Language, len(langs))
+	byExt := make(map[string]*Language, len(langs))
+	byName := make(map[string]*Language, len(langs))
 	for langName, lang := range langs {
+		l := &Language{
+			ScriptShell:  lang.ScriptShell,
+			CommandShell: lang.CommandShell,
+			Language:     langName,
+		}
+		byName[langName] = l
 		for _, ext := range lang.Extensions {
-			ret[ext] = &Language{
-				Shell:    lang.Shell,
-				Language: langName,
-			}
+			byExt[ext] = l
 		}
 	}
-	return ret, nil
+	return byExt, byName, nil
 }
