@@ -231,7 +231,7 @@ type Command struct {
 	Timeout        int               `json:"timeout,omitempty" jsonschema_description:"The timeout of command. By default, there is no timeout. If timeout is exceeded, the signal SIGINT is sent to the process."`
 	TimeoutSigkill int               `json:"timeout_sigkill,omitempty" jsonschema_description:"If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."`
 	Shell          []string          `json:"shell,omitempty" jsonschema_description:"The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"`
-	Envs           map[string]string `json:"envs,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
+	Env            map[string]string `json:"env,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
 	IgnoreFail     bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
 	EmbedScript    bool              `json:"embed_script,omitempty" yaml:"embed_script" jsonschema_description:"If this is true, the content of script is embedded into documents."`
 	Quiet          bool              `json:"quiet,omitempty" jsonschema_description:"If this is true, the command output isn't outputted to documents."`
@@ -245,7 +245,7 @@ type PostCommand struct {
 	Timeout        int               `json:"timeout,omitempty" jsonschema_description:"The timeout of command. By default, there is no timeout. If timeout is exceeded, the signal SIGINT is sent to the process."`
 	TimeoutSigkill int               `json:"timeout_sigkill,omitempty" jsonschema_description:"If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."`
 	Shell          []string          `json:"shell,omitempty" jsonschema_description:"The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"`
-	Envs           map[string]string `json:"envs,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
+	Env            map[string]string `json:"env,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
 	IgnoreFail     bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
 }
 
@@ -258,7 +258,7 @@ func (p *PostCommand) ToCommand() *Command {
 		Timeout:        p.Timeout,
 		TimeoutSigkill: p.TimeoutSigkill,
 		Shell:          p.Shell,
-		Envs:           p.Envs,
+		Env:            p.Env,
 		IgnoreFail:     p.IgnoreFail,
 	}
 }
