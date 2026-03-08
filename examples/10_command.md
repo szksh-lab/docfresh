@@ -106,7 +106,7 @@ Hello
 ### Embed the content of command.script
 
 If `command.embed_script` is true, the script content is embedded.
-`script_language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
+`language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
 
 <!-- docfresh begin
 command:
@@ -135,7 +135,7 @@ Hello
 
 ### Automatic detection of script languages by file extensions
 
-`script_language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
+`language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
 
 [languages.yaml](../pkg/controller/run/languages.yaml)
 

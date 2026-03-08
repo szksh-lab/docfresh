@@ -40,7 +40,7 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 		return nil, fmt.Errorf("read response body: %w", err)
 	}
 
-	sl := c.scriptLanguageFromURL(h.URL)
+	sl := c.languageFromURL(h.URL)
 
 	content := string(b)
 	content, err = extractRange(content, h.Range)
@@ -48,12 +48,12 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 		return nil, fmt.Errorf("extract range from http response: %w", err)
 	}
 	result := &TemplateInput{
-		Type:           "http",
-		URL:            h.URL,
-		Content:        string(b),
-		ScriptLanguage: sl,
-		Timeout:        h.Timeout,
-		Vars:           h.Template.GetVars(),
+		Type:     "http",
+		URL:      h.URL,
+		Content:  string(b),
+		Language: sl,
+		Timeout:  h.Timeout,
+		Vars:     h.Template.GetVars(),
 	}
 	if h.Template != nil {
 		if err := renderTemplate(content, result, h.Template.Delims); err != nil {
@@ -64,7 +64,7 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 	return result, nil
 }
 
-func (c *Controller) scriptLanguageFromURL(rawURL string) string {
+func (c *Controller) languageFromURL(rawURL string) string {
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return ""

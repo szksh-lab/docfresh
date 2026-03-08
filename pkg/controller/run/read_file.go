@@ -26,11 +26,11 @@ func (c *Controller) readFile(baseFile string, file *File) (*TemplateInput, erro
 	}
 
 	result := &TemplateInput{
-		Type:           "local-file",
-		Path:           file.Path,
-		ScriptLanguage: sl,
-		Content:        content,
-		Vars:           file.Template.GetVars(),
+		Type:     "local-file",
+		Path:     file.Path,
+		Language: sl,
+		Content:  content,
+		Vars:     file.Template.GetVars(),
 	}
 
 	if file.Template != nil {

@@ -64,7 +64,7 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 	script := command.Command
 	var content string
 	dir := getCommandDir(file, command)
-	scriptLanguage := command.ScriptLanguage
+	scriptLanguage := command.Language
 	if command.Script != "" {
 		script = command.Script
 		if scriptLanguage == "" {
@@ -102,7 +102,7 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 		Shell:          shell,
 		Command:        command.Command,
 		Script:         command.Script,
-		ScriptLanguage: scriptLanguage,
+		Language:       scriptLanguage,
 		EmbedScript:    command.EmbedScript,
 		Dir:            command.Dir,
 		Stdout:         stdout.String(),
