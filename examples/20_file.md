@@ -63,3 +63,32 @@ use_fenced_code_block_for_output: true
 10
 ```
 <!-- docfresh end -->
+
+## details_tag
+
+[Please see command#details_tag.](10_command.md#details_tag)
+
+<!-- docfresh begin
+file:
+  path: file/range.md
+details_tag: {}
+use_fenced_code_block_for_output: true
+-->
+<details>
+<summary>file/range.md</summary>
+
+```md
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+```
+
+</details>
+<!-- docfresh end -->

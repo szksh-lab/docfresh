@@ -53,3 +53,28 @@ http:
 ## Range
 
 Please see [file#Range](20_file.md#range).
+
+## details_tag
+
+[Please see command#details_tag.](10_command.md#details_tag)
+
+<!-- docfresh begin
+http:
+  url: https://jsonplaceholder.typicode.com/todos/1
+details_tag: {}
+use_fenced_code_block_for_output: true
+-->
+<details>
+<summary>https://jsonplaceholder.typicode.com/todos/1</summary>
+
+```
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+```
+
+</details>
+<!-- docfresh end -->

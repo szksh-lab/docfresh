@@ -42,3 +42,31 @@ export DOCFRESH_GHTKN_ENABLED=true
 ## Range
 
 Please see [file#Range](20_file.md#range).
+
+## details_tag
+
+[Please see command#details_tag.](10_command.md#details_tag)
+
+<!-- docfresh begin
+github_content:
+  owner: suzuki-shunsuke
+  repo: docfresh
+  path: .gitignore
+  ref: main
+details_tag: {}
+use_fenced_code_block_for_output: true
+-->
+<details>
+<summary>suzuki-shunsuke/docfresh/.gitignore@main</summary>
+
+```
+dist
+.coverage
+third_party_licenses
+.serena
+ja
+*-ja.md
+```
+
+</details>
+<!-- docfresh end -->

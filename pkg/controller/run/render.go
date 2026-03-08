@@ -41,6 +41,13 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 		return "", fmt.Errorf("execute a command: %w", err)
 	}
 	result.UseFencedCodeBlockForOutput = block.Input.GetUseFencedCodeBlockForOutput()
+	if dt := block.Input.DetailsTag; dt != nil {
+		summary := dt.Summary
+		if summary == "" {
+			summary = defaultDetailsTagSummary(result)
+		}
+		result.DetailsTagSummary = summary
+	}
 	if t := block.Input.Test(); t != "" {
 		if err := testResult(c.stderr, t, result); err != nil {
 			return "", err
@@ -73,15 +80,51 @@ func render(tpl *Template, result *TemplateInput) (string, error) {
 }
 
 func renderFile(tpl *Template, result *TemplateInput) (string, error) {
-	if tpl != nil {
+	var s string
+	switch {
+	case tpl != nil:
 		result.Vars = tpl.Vars
-		return execTpl(tpl.Template, result)
+		var err error
+		s, err = execTpl(tpl.Template, result)
+		if err != nil {
+			return "", err
+		}
+	case !result.UseFencedCodeBlockForOutput:
+		s = result.Content
+	default:
+		if !strings.HasSuffix(result.Content, "\n") {
+			result.Content += "\n"
+		}
+		s = "```" + result.ScriptLanguage + "\n" + result.Content + "```"
 	}
-	if !result.UseFencedCodeBlockForOutput {
-		return result.Content, nil
+	if result.DetailsTagSummary != "" {
+		s = wrapDetailsTag(s, result.DetailsTagSummary)
 	}
-	if !strings.HasSuffix(result.Content, "\n") {
-		result.Content += "\n"
+	return s, nil
+}
+
+func defaultDetailsTagSummary(result *TemplateInput) string {
+	switch result.Type {
+	case "command":
+		return "Output"
+	case "local-file":
+		return result.Path
+	case "http":
+		return result.URL
+	case "github-content":
+		s := result.Owner + "/" + result.Repo + "/" + result.Path
+		if result.Ref != "" {
+			s += "@" + result.Ref
+		}
+		return s
+	default:
+		return "Output"
 	}
-	return "```" + result.ScriptLanguage + "\n" + result.Content + "```", nil
+}
+
+func wrapDetailsTag(content, summary string) string {
+	if !strings.HasSuffix(content, "\n") {
+		content += "\n"
+	}
+	return "<details>\n<summary>" + summary + "</summary>\n\n" + content + "\n</details>"
 }

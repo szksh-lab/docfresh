@@ -291,3 +291,27 @@ echo hello
 ```
 
 <!-- docfresh end -->
+
+## details_tag
+
+Allow wrapping output in HTML `<details>` tags so large outputs can be collapsed by default.
+
+<!-- docfresh begin
+command:
+  command: echo hello
+details_tag:
+  summary: Hello
+-->
+```sh
+echo hello
+```
+
+<details>
+<summary>Hello</summary>
+
+```
+hello
+```
+
+</details>
+<!-- docfresh end -->
