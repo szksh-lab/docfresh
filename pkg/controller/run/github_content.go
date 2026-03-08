@@ -10,6 +10,10 @@ func (c *Controller) getGitHubContent(ctx context.Context, content *GitHubConten
 	if err != nil {
 		return nil, fmt.Errorf("get a file by GitHub Content API: %w", err)
 	}
+	s, err = extractRange(s, content.Range)
+	if err != nil {
+		return nil, fmt.Errorf("extract range from github content: %w", err)
+	}
 	return &TemplateInput{
 		Type:    "github-content",
 		Content: s,

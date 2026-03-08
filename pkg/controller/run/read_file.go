@@ -20,6 +20,10 @@ func (c *Controller) readFile(baseFile string, file *File) (*TemplateInput, erro
 		sl = lang.Language
 	}
 	content := string(b)
+	content, err = extractRange(content, file.Range)
+	if err != nil {
+		return nil, fmt.Errorf("extract range from file: %w", err)
+	}
 
 	result := &TemplateInput{
 		Type:           "local-file",

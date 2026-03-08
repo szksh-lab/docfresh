@@ -29,3 +29,37 @@ ls "${dir}"/*.md | sed "s|^./||" | grep -v README.md | sort -u | while read -r f
 done
 ```
 <!-- docfresh end -->
+
+## Range
+
+Support extracting a specific range of lines from content fetched via `file`, `http`, or `github_content`.
+Uses 0-based indexing with half-open interval [start, end).
+
+<!-- docfresh begin
+file:
+  path: file/range.md
+  range:
+    start: 2
+    end: 4
+use_fenced_code_block_for_output: true
+-->
+```md
+3
+4
+```
+<!-- docfresh end -->
+
+Negative values count from the end.
+
+<!-- docfresh begin
+file:
+  path: file/range.md
+  range:
+    start: -2
+use_fenced_code_block_for_output: true
+-->
+```md
+9
+10
+```
+<!-- docfresh end -->

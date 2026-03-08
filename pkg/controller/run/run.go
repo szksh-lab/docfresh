@@ -173,6 +173,7 @@ type GitHubContent struct {
 	Repo     string        `json:"repo" jsonschema_description:"GitHub repository name"`
 	Ref      string        `json:"ref,omitempty" jsonschema_description:"The ref (branch, tag, SHA). The default branch is used by default."`
 	Path     string        `json:"path" jsonschema_description:"The path of GitHub Contents API"`
+	Range    *Range        `json:"range,omitempty" jsonschema_description:"Extract a specific range of lines from the content. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."`
 	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the file content is rendered as template rather than plain text."`
 	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
 }
@@ -199,6 +200,7 @@ func (t *Template) GetVars() map[string]any {
 
 type HTTP struct {
 	URL      string        `json:"url" jsonschema_description:"URL for HTTP request"`
+	Range    *Range        `json:"range,omitempty" jsonschema_description:"Extract a specific range of lines from the response. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."`
 	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the response body is rendered as template rather than plain text."`
 	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the response. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
 	Timeout  int           `json:"timeout,omitempty" jsonschema_description:"HTTP request timeout (seconds). The default value is 5 seconds. If the value is negative, timeout isn't set"`
@@ -207,6 +209,7 @@ type HTTP struct {
 
 type File struct {
 	Path     string        `json:"path" jsonschema_description:"The file path. It's an absolute path or relative path from the current file."`
+	Range    *Range        `json:"range,omitempty" jsonschema_description:"Extract a specific range of lines from the file. Uses 0-based indexing with half-open interval [start, end). Negative values count from the end."`
 	Template *TemplateData `json:"template,omitempty" jsonschema_description:"If this is set, the file is rendered as template rather than plain text."`
 	Test     string        `json:"test,omitempty" jsonschema_description:"Expr script to test the file content. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
 }
