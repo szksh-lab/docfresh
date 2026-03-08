@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/suzuki-shunsuke/cmdx/v2.0.2/json-schema/cmdx.json
 # the configuration file of cmdx - task runner
 # https://github.com/suzuki-shunsuke/cmdx
 tasks:
@@ -56,3 +57,7 @@ tasks:
     script: |
       git ls-files --modified --others --exclude-standard | (grep -E "\.go$" || true) | xargs -r gofumpt -l -w
       git ls-files --modified --others --exclude-standard | xargs -r nllint -s
+  - name: run
+    description: run docfresh via go run
+    usage: run docfresh via go run
+    script: go run ./cmd/docfresh {{._builtin.all_args_string}}
