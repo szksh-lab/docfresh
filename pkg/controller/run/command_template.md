@@ -1,13 +1,13 @@
 {{if .Command -}}
-```sh
+```{{.CommandLanguage | default "sh"}}
 {{trimSuffix "\n" .Command}}
 ```
 {{- else if .EmbedScript -}}
-```{{.CommandLanguage}}
+```{{.CommandLanguage | default "sh"}}
 {{trimSuffix "\n" .Content}}
 ```
 {{- else -}}
-```sh
+```{{.CommandLanguage | default "sh"}}
 {{join " " .Shell}} {{trimSuffix "\n" .Script}}
 ```
 {{- end}}
