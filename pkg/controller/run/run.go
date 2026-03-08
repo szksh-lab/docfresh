@@ -115,6 +115,11 @@ type BlockInput struct {
 	GitHubContent               *GitHubContent `json:"github_content,omitempty" yaml:"github_content" jsonschema_description:"Fetch a file by GitHub Contents API and embed it into documents"`
 	Template                    *Template      `json:"template,omitempty" jsonschema_description:"Customize the template"`
 	UseFencedCodeBlockForOutput *bool          `json:"use_fenced_code_block_for_output,omitempty" yaml:"use_fenced_code_block_for_output" jsonschema_description:"If this is true, the content is wrapped using markdown's fenced code block"`
+	DetailsTag                  *DetailsTag    `json:"details_tag,omitempty" yaml:"details_tag" jsonschema_description:"Wrap the output in an HTML details tag"`
+}
+
+type DetailsTag struct {
+	Summary string `json:"summary,omitempty" jsonschema_description:"The summary text. Defaults: 'Output' for commands, file path for file, URL for http, '<owner>/<repo>/<ref>/<path>' for github_content."`
 }
 
 func (b *BlockInput) GetUseFencedCodeBlockForOutput() bool {
@@ -283,4 +288,5 @@ type TemplateInput struct {
 	EmbedScript                 bool
 	UseFencedCodeBlockForOutput bool
 	Quiet                       bool
+	DetailsTagSummary           string
 }

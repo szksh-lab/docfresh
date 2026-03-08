@@ -13,6 +13,20 @@
 {{- end}}
 
 {{if not .Quiet -}}
+{{if .DetailsTagSummary -}}
+<details>
+<summary>{{.DetailsTagSummary}}</summary>
+
+{{if .UseFencedCodeBlockForOutput -}}
+```
+{{trimSuffix "\n" .CombinedOutput}}
+```
+{{- else -}}
+{{trimSuffix "\n" .CombinedOutput}}
+{{- end}}
+
+</details>
+{{- else -}}
 {{if .UseFencedCodeBlockForOutput -}}
 Output:
 
@@ -21,5 +35,6 @@ Output:
 ```
 {{- else -}}
 {{trimSuffix "\n" .CombinedOutput}}
+{{- end}}
 {{- end}}
 {{- end -}}

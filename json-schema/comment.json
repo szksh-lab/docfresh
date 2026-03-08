@@ -36,6 +36,10 @@
         "use_fenced_code_block_for_output": {
           "type": "boolean",
           "description": "If this is true, the content is wrapped using markdown's fenced code block"
+        },
+        "details_tag": {
+          "$ref": "#/$defs/DetailsTag",
+          "description": "Wrap the output in an HTML details tag"
         }
       },
       "additionalProperties": false,
@@ -118,6 +122,16 @@
         "left",
         "right"
       ]
+    },
+    "DetailsTag": {
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "The summary text. Defaults: 'Output' for commands, file path for file, URL for http, '\u003cowner\u003e/\u003crepo\u003e/\u003cref\u003e/\u003cpath\u003e' for github_content."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "File": {
       "properties": {
