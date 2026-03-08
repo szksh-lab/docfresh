@@ -11,7 +11,7 @@ template:
 - [Embed Local Files](20_file.md)
 - [Fetch Files Via HTTP](30_http.md)
 - [Fetch files by GitHub Contents API](40_github_content.md)
-- [Customize Template](50-template.md)
-- [Test Command Results And Fetched File Contents](60-test.md)
-- [post (cleanup)](70-post.md)
+- [Customize Template](50_template.md)
+- [Test Command Results And Fetched File Contents](60_test.md)
+- [Post (Cleanup)](70_post.md)
 <!-- docfresh end -->

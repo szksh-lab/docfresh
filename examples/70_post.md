@@ -1,4 +1,4 @@
-# post (cleanup)
+# Post (Cleanup)
 
 If you want to ensure that some processing is always executed at the end of a file’s processing, you can use `<!-- docfresh post ... -->`.  
 Commands defined in this comment are executed at the end of the file processing regardless of whether the file processing succeeded or failed.
