@@ -27,10 +27,10 @@ typ = "typ"
 ```
 <!-- docfresh end -->
 
-## Specify the language explictly
+## Specify the language explicitly
 
-If `code_block` is true, the language is automatically deteced by the file extension of the URL path.
-You can specify the language explictly by `language`.
+If `code_block` is true, the language is automatically detected by the file extension of the URL path.
+You can specify the language explicitly by `language`.
 
 <!-- docfresh begin
 http:
