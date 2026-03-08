@@ -93,6 +93,59 @@ func TestDefaultDetailsTagSummary(t *testing.T) {
 	}
 }
 
+func TestAppendEndComment(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name       string
+		content    string
+		s          string
+		endComment string
+		want       string
+	}{
+		{
+			name:       "s with trailing newline",
+			content:    "<!-- begin -->",
+			s:          "body\n",
+			endComment: "<!-- end -->",
+			want:       "<!-- begin -->\nbody\n<!-- end -->",
+		},
+		{
+			name:       "s without trailing newline",
+			content:    "<!-- begin -->",
+			s:          "body",
+			endComment: "<!-- end -->",
+			want:       "<!-- begin -->\nbody\n<!-- end -->",
+		},
+		{
+			name:       "empty s",
+			content:    "<!-- begin -->",
+			s:          "",
+			endComment: "<!-- end -->",
+			want:       "<!-- begin -->\n\n<!-- end -->",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			got := appendEndComment(tt.content, tt.s, tt.endComment)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
+func TestRender(t *testing.T) {
+	t.Parallel()
+	t.Run("unknown type returns error", func(t *testing.T) {
+		t.Parallel()
+		_, err := render(nil, &TemplateInput{Type: "invalid"})
+		if err == nil {
+			t.Fatal("expected error but got nil")
+		}
+	})
+}
+
 func TestRenderFile_DetailsTag(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
