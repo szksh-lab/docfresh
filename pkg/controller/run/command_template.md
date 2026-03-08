@@ -1,13 +1,13 @@
 {{if .Command -}}
-```sh
+```{{.CommandLanguage | default "sh"}}
 {{trimSuffix "\n" .Command}}
 ```
 {{- else if .EmbedScript -}}
-```{{.Language}}
+```{{.CommandLanguage | default "sh"}}
 {{trimSuffix "\n" .Content}}
 ```
 {{- else -}}
-```sh
+```{{.CommandLanguage | default "sh"}}
 {{join " " .Shell}} {{trimSuffix "\n" .Script}}
 ```
 {{- end}}
@@ -18,7 +18,7 @@
 <summary>{{.DetailsTagSummary}}</summary>
 
 {{if .CodeBlock -}}
-```
+```{{.OutputLanguage}}
 {{trimSuffix "\n" .CombinedOutput}}
 ```
 {{- else -}}
@@ -30,7 +30,7 @@
 {{if .CodeBlock -}}
 Output:
 
-```
+```{{.OutputLanguage}}
 {{trimSuffix "\n" .CombinedOutput}}
 ```
 {{- else -}}

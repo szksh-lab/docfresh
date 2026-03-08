@@ -59,22 +59,16 @@ foo
 <!-- docfresh begin
 command:
   command: console.log("hello")
+  command_language: js
   shell:
     - node
     - "-e"
-template:
-  content: |
-    ```js
-    {{.Command}}
-    ```
-    
-    ```
-    {{trimSuffix "\n" .CombinedOutput}}
-    ```
 -->
 ```js
 console.log("hello")
 ```
+
+Output:
 
 ```
 hello
@@ -133,9 +127,9 @@ Hello
 ```
 <!-- docfresh end -->
 
-### Automatic detection of script languages by file extensions
+### Automatic detection of `command_language` of `script` by file extensions
 
-`language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
+`command_language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
 
 [languages.yaml](../pkg/controller/run/languages.yaml)
 
