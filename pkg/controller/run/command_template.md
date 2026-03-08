@@ -3,7 +3,7 @@
 {{trimSuffix "\n" .Command}}
 ```
 {{- else if .EmbedScript -}}
-```{{.Language}}
+```{{.CommandLanguage}}
 {{trimSuffix "\n" .Content}}
 ```
 {{- else -}}
@@ -18,7 +18,7 @@
 <summary>{{.DetailsTagSummary}}</summary>
 
 {{if .CodeBlock -}}
-```
+```{{.OutputLanguage}}
 {{trimSuffix "\n" .CombinedOutput}}
 ```
 {{- else -}}
@@ -30,7 +30,7 @@
 {{if .CodeBlock -}}
 Output:
 
-```
+```{{.OutputLanguage}}
 {{trimSuffix "\n" .CombinedOutput}}
 ```
 {{- else -}}

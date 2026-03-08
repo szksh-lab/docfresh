@@ -223,18 +223,19 @@ type File struct {
 }
 
 type Command struct {
-	Command        string            `json:"command,omitempty" jsonschema_description:"The content of executed script. Either command or script is required"`
-	Script         string            `json:"script,omitempty" jsonschema_description:"The file path to executed script. It's an absolute path or relative path from the current file. Either command or script is required"`
-	Dir            string            `json:"dir,omitempty" jsonschema_description:"The directory path where commands are executed. It's an absolute path or relative path from the current file. The default value is the directory where the current file is located"`
-	Test           string            `json:"test,omitempty" jsonschema_description:"Expr script to test the result of command. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
-	Language       string            `json:"language,omitempty" jsonschema_description:"Language of script. This is used for markdown's fenced code block. This is automatically detected in some languages such as Go and Python"`
-	Timeout        int               `json:"timeout,omitempty" jsonschema_description:"The timeout of command. By default, there is no timeout. If timeout is exceeded, the signal SIGINT is sent to the process."`
-	TimeoutSigkill int               `json:"timeout_sigkill,omitempty" jsonschema_description:"If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."`
-	Shell          []string          `json:"shell,omitempty" jsonschema_description:"The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"`
-	Env            map[string]string `json:"env,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
-	IgnoreFail     bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
-	EmbedScript    bool              `json:"embed_script,omitempty" yaml:"embed_script" jsonschema_description:"If this is true, the content of script is embedded into documents."`
-	Quiet          bool              `json:"quiet,omitempty" jsonschema_description:"If this is true, the command output isn't outputted to documents."`
+	Command         string            `json:"command,omitempty" jsonschema_description:"The content of executed script. Either command or script is required"`
+	Script          string            `json:"script,omitempty" jsonschema_description:"The file path to executed script. It's an absolute path or relative path from the current file. Either command or script is required"`
+	Dir             string            `json:"dir,omitempty" jsonschema_description:"The directory path where commands are executed. It's an absolute path or relative path from the current file. The default value is the directory where the current file is located"`
+	Test            string            `json:"test,omitempty" jsonschema_description:"Expr script to test the result of command. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"`
+	CommandLanguage string            `json:"command_language,omitempty" yaml:"command_language" jsonschema_description:"Language of script. This is used for markdown's fenced code block. This is automatically detected in some languages such as Go and Python"`
+	OutputLanguage  string            `json:"output_language,omitempty" yaml:"output_language" jsonschema_description:"Language of command output. This is used for markdown's fenced code block"`
+	Timeout         int               `json:"timeout,omitempty" jsonschema_description:"The timeout of command. By default, there is no timeout. If timeout is exceeded, the signal SIGINT is sent to the process."`
+	TimeoutSigkill  int               `json:"timeout_sigkill,omitempty" jsonschema_description:"If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."`
+	Shell           []string          `json:"shell,omitempty" jsonschema_description:"The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"`
+	Env             map[string]string `json:"env,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
+	IgnoreFail      bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
+	EmbedScript     bool              `json:"embed_script,omitempty" yaml:"embed_script" jsonschema_description:"If this is true, the content of script is embedded into documents."`
+	Quiet           bool              `json:"quiet,omitempty" jsonschema_description:"If this is true, the command output isn't outputted to documents."`
 }
 
 type PostCommand struct {
@@ -266,15 +267,17 @@ func (p *PostCommand) ToCommand() *Command {
 type TemplateInput struct {
 	Type string
 	// command
-	Command        string
-	Script         string
-	Shell          []string
-	Dir            string
-	Stdout         string
-	Stderr         string
-	CombinedOutput string
-	Language       string
-	ExitCode       int
+	Command         string
+	Script          string
+	Shell           []string
+	Dir             string
+	Stdout          string
+	Stderr          string
+	CombinedOutput  string
+	Language        string
+	CommandLanguage string
+	OutputLanguage  string
+	ExitCode        int
 	// file
 	Path    string
 	Content string

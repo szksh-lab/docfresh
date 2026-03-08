@@ -64,7 +64,7 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 	script := command.Command
 	var content string
 	dir := getCommandDir(file, command)
-	scriptLanguage := command.Language
+	scriptLanguage := command.CommandLanguage
 	if command.Script != "" {
 		script = command.Script
 		if scriptLanguage == "" {
@@ -98,19 +98,20 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 		return nil, fmt.Errorf("execute a command: %w", err)
 	}
 	return &TemplateInput{
-		Type:           "command",
-		Shell:          shell,
-		Command:        command.Command,
-		Script:         command.Script,
-		Language:       scriptLanguage,
-		EmbedScript:    command.EmbedScript,
-		Dir:            command.Dir,
-		Stdout:         stdout.String(),
-		Stderr:         stderr.String(),
-		CombinedOutput: combinedOutput.String(),
-		ExitCode:       cmd.ProcessState.ExitCode(),
-		Content:        content,
-		Quiet:          command.Quiet,
+		Type:            "command",
+		Shell:           shell,
+		Command:         command.Command,
+		Script:          command.Script,
+		CommandLanguage: scriptLanguage,
+		OutputLanguage:  command.OutputLanguage,
+		EmbedScript:     command.EmbedScript,
+		Dir:             command.Dir,
+		Stdout:          stdout.String(),
+		Stderr:          stderr.String(),
+		CombinedOutput:  combinedOutput.String(),
+		ExitCode:        cmd.ProcessState.ExitCode(),
+		Content:         content,
+		Quiet:           command.Quiet,
 	}, nil
 }
 
