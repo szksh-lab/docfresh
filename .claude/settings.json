@@ -27,7 +27,7 @@
       "Bash(go build:*)",
       "Bash(go list:*)",
       "Bash(go mod tidy:*)",
-      "Bash(go run ./cmd/docfresh run)",
+      "Bash(go run ./cmd/docfresh run:*)",
       "Bash(go run ./cmd/gen-jsonschema)",
       "Bash(go run ./cmd/gen-jsonschema/main.go)",
       "Bash(go test:*)",
