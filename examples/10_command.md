@@ -40,7 +40,7 @@ This is read from foo.md
 <!-- docfresh begin
 command:
   command: echo "$FOO"
-  envs:
+  env:
     FOO: foo
 -->
 ```sh

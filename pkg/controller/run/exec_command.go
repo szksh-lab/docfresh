@@ -92,7 +92,7 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 	cmd.Stdout = io.MultiWriter(os.Stdout, stdout, combinedOutput)
 	cmd.Stderr = io.MultiWriter(os.Stderr, stderr, combinedOutput)
 	setCancel(logger, cmd, time.Duration(command.TimeoutSigkill)*time.Second)
-	cmd.Env = getEnvs(command.Envs, c.environ)
+	cmd.Env = getEnv(command.Env, c.environ)
 	fmt.Fprintln(os.Stderr, "+", command.Command)
 	if err := cmd.Run(); err != nil && !command.IgnoreFail {
 		return nil, fmt.Errorf("execute a command: %w", err)
@@ -114,12 +114,12 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 	}, nil
 }
 
-func getEnvs(envs map[string]string, osEnvs []string) []string {
+func getEnv(env map[string]string, osEnvs []string) []string {
 	arr := osEnvs
-	if len(envs) == 0 {
+	if len(env) == 0 {
 		return nil
 	}
-	for k, v := range envs {
+	for k, v := range env {
 		arr = append(arr, k+"="+v)
 	}
 	return arr

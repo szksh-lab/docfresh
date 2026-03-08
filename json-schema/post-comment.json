@@ -36,7 +36,7 @@
           "type": "array",
           "description": "The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"
         },
-        "envs": {
+        "env": {
           "additionalProperties": {
             "type": "string"
           },
