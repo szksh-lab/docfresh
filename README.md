@@ -67,6 +67,7 @@ template:
 - [Customize Template](examples/50_template.md)
 - [Test Command Results And Fetched File Contents](examples/60_test.md)
 - [Post (Cleanup)](examples/70_post.md)
+- [Transform command outputs and file contents before rendering](examples/80_transform.md)
 <!-- docfresh end -->
 
 ## Motivation
