@@ -43,7 +43,7 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 
 	sl := h.Language
 	if sl == "" {
-		sl = c.languageFromURL(h.URL)
+		sl = languageFromURL(h.URL, c.langs)
 	}
 	if sl == "" && json.Valid(b) {
 		sl = "json"
@@ -71,13 +71,13 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 	return result, nil
 }
 
-func (c *Controller) languageFromURL(rawURL string) string {
+func languageFromURL(rawURL string, langs map[string]*Language) string {
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return ""
 	}
 	ext := path.Ext(u.Path)
-	lang, ok := c.langs[ext]
+	lang, ok := langs[ext]
 	if !ok {
 		return ""
 	}
