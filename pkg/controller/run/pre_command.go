@@ -10,6 +10,7 @@ func (c *Controller) runPreCommand(ctx context.Context, logger *slog.Logger, fil
 	if block.Input.PreCommand == nil {
 		return nil
 	}
+	fmt.Fprintf(c.stderr, "> pre_command %s:%d\n", file, block.LineNumber)
 	result, err := c.execCommand(ctx, logger, file, block.Input.PreCommand)
 	if err != nil {
 		return err
