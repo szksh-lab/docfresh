@@ -15,7 +15,7 @@ func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string,
 		return c.readFile(file, input.File)
 	}
 	if input.HTTP != nil {
-		return c.request(ctx, input.HTTP)
+		return callHTTP(ctx, input.HTTP, c.httpClient, c.langs)
 	}
 	if input.GitHubContent != nil {
 		return getGitHubContent(ctx, c.gh, c.langs, input.GitHubContent)

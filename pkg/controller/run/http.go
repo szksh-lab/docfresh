@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, error) { //nolint:cyclop
+func callHTTP(ctx context.Context, h *HTTP, httpClient *http.Client, langs map[string]*Language) (*TemplateInput, error) { //nolint:cyclop
 	if h.Timeout == 0 {
 		h.Timeout = 5
 	}
@@ -28,7 +28,7 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 		req.Header = h.Header
 	}
 
-	resp, err := c.httpClient.Do(req) //nolint:gosec
+	resp, err := httpClient.Do(req) //nolint:gosec
 	if err != nil {
 		return nil, fmt.Errorf("send http request: %w", err)
 	}
@@ -43,7 +43,7 @@ func (c *Controller) request(ctx context.Context, h *HTTP) (*TemplateInput, erro
 
 	sl := h.Language
 	if sl == "" {
-		sl = languageFromURL(h.URL, c.langs)
+		sl = languageFromURL(h.URL, langs)
 	}
 	if sl == "" && json.Valid(b) {
 		sl = "json"
