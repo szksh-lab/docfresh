@@ -7,16 +7,16 @@ import (
 	"github.com/spf13/afero"
 )
 
-func (c *Controller) readFile(baseFile string, file *File) (*TemplateInput, error) {
+func readFile(baseFile string, file *File, fs afero.Fs, langs map[string]*Language) (*TemplateInput, error) {
 	p := resolvePath(baseFile, file.Path)
-	b, err := afero.ReadFile(c.fs, p)
+	b, err := afero.ReadFile(fs, p)
 	if err != nil {
 		return nil, fmt.Errorf("read file: %w", err)
 	}
 	sl := file.Language
 	if sl == "" {
 		ext := filepath.Ext(p)
-		if lang, ok := c.langs[ext]; ok {
+		if lang, ok := langs[ext]; ok {
 			sl = lang.Language
 		}
 	}

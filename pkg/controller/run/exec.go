@@ -12,13 +12,13 @@ func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string,
 		return c.execCommand(ctx, logger, file, input.Command)
 	}
 	if input.File != nil {
-		return c.readFile(file, input.File)
+		return readFile(file, input.File, c.fs, c.langs)
 	}
 	if input.HTTP != nil {
-		return c.request(ctx, input.HTTP)
+		return callHTTP(ctx, input.HTTP, c.httpClient, c.langs)
 	}
 	if input.GitHubContent != nil {
-		return c.getGitHubContent(ctx, input.GitHubContent)
+		return getGitHubContent(ctx, c.gh, c.langs, input.GitHubContent)
 	}
 	return nil, errors.New("no command or file specified")
 }
