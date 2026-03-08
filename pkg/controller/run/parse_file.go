@@ -11,10 +11,11 @@ import (
 const (
 	beginMarker = "<!-- docfresh begin"
 	endMarker   = "<!-- docfresh end -->"
+	postMarker  = "<!-- docfresh post"
 )
 
 // parseFile parses a file and returns a list of blocks.
-func parseFile(content string) ([]*Block, error) { //nolint:cyclop
+func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen
 	codeBlocks := findCodeBlockRanges(content)
 	codeBlocks = append(codeBlocks, findInlineCodeRanges(content, codeBlocks)...)
 	var blocks []*Block
@@ -22,11 +23,26 @@ func parseFile(content string) ([]*Block, error) { //nolint:cyclop
 	for pos < len(content) {
 		beginIdx := indexOutsideCodeBlocks(content, beginMarker, pos, codeBlocks)
 		endIdx := indexOutsideCodeBlocks(content, endMarker, pos, codeBlocks)
+		postIdx := indexOutsideCodeBlocks(content, postMarker, pos, codeBlocks)
 
 		// No more markers — emit remaining text and break.
-		if beginIdx == -1 && endIdx == -1 {
+		if beginIdx == -1 && endIdx == -1 && postIdx == -1 {
 			blocks = appendText(blocks, content[pos:])
 			break
+		}
+
+		// Check if post marker comes first.
+		if postIdx != -1 && (beginIdx == -1 || postIdx < beginIdx) && (endIdx == -1 || postIdx < endIdx) {
+			block, newPos, err := parsePostBlock(content, pos, postIdx)
+			if err != nil {
+				return nil, err
+			}
+			if postIdx > 0 {
+				blocks = appendText(blocks, content[pos:pos+postIdx])
+			}
+			blocks = append(blocks, block)
+			pos = newPos
+			continue
 		}
 
 		// end before begin (or end without begin).
@@ -81,6 +97,31 @@ func parseFile(content string) ([]*Block, error) { //nolint:cyclop
 		pos = endCommentEnd
 	}
 	return blocks, nil
+}
+
+func parsePostBlock(content string, pos, postIdx int) (*Block, int, error) {
+	postStart := pos + postIdx
+	closeIdx := strings.Index(content[postStart+len(postMarker):], "-->")
+	if closeIdx == -1 {
+		return nil, 0, errors.New("unclosed <!-- docfresh post comment: missing -->")
+	}
+	postCommentEnd := postStart + len(postMarker) + closeIdx + len("-->")
+	postComment := content[postStart:postCommentEnd]
+
+	yamlStr := content[postStart+len(postMarker) : postStart+len(postMarker)+closeIdx]
+	yamlStr = strings.TrimSpace(yamlStr)
+	cmd := &PostCommand{}
+	if err := yaml.Unmarshal([]byte(yamlStr), cmd); err != nil {
+		return nil, 0, fmt.Errorf("failed to parse YAML in post comment: %w", err)
+	}
+
+	return &Block{
+		Type:    "post",
+		Content: postComment,
+		Input: &BlockInput{
+			Command: cmd.ToCommand(),
+		},
+	}, postCommentEnd, nil
 }
 
 // countLeadingBackticks returns the number of leading backtick characters in s.

@@ -18,5 +18,8 @@ func core() error {
 	if err := jsonschema.Write(&run.BlockInput{}, "json-schema/comment.json"); err != nil {
 		return fmt.Errorf("create or update a JSON Schema: %w", err)
 	}
+	if err := jsonschema.Write(&run.PostCommand{}, "json-schema/post-comment.json"); err != nil {
+		return fmt.Errorf("create or update a JSON Schema: %w", err)
+	}
 	return nil
 }

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/suzuki-shunsuke/docfresh/pkg/controller/run/post-command",
+  "$ref": "#/$defs/PostCommand",
+  "$defs": {
+    "PostCommand": {
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "The content of executed script. Either command or script is required"
+        },
+        "script": {
+          "type": "string",
+          "description": "The file path to executed script. It's an absolute path or relative path from the current file. Either command or script is required"
+        },
+        "dir": {
+          "type": "string",
+          "description": "The directory path where commands are executed. It's an absolute path or relative path from the current file. The default value is the directory where the current file is located"
+        },
+        "test": {
+          "type": "string",
+          "description": "Expr script to test the result of command. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "The timeout of command. By default, there is no timeout. If timeout is exceeded, the signal SIGINT is sent to the process."
+        },
+        "timeout_sigkill": {
+          "type": "integer",
+          "description": "If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."
+        },
+        "shell": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"
+        },
+        "envs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object",
+          "description": "Pairs of environment variable names and values"
+        },
+        "ignore_fail": {
+          "type": "boolean",
+          "description": "If this is true, docfresh does't fail even if command fails"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}
