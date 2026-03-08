@@ -63,9 +63,13 @@
           "type": "string",
           "description": "Expr script to test the result of command. The evaluation result must be a boolean. If the evaluation result is false, docfresh fails"
         },
-        "language": {
+        "command_language": {
           "type": "string",
           "description": "Language of script. This is used for markdown's fenced code block. This is automatically detected in some languages such as Go and Python"
+        },
+        "output_language": {
+          "type": "string",
+          "description": "Language of command output. This is used for markdown's fenced code block"
         },
         "timeout": {
           "type": "integer",
