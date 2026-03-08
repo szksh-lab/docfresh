@@ -3,7 +3,7 @@
 {{trimSuffix "\n" .Command}}
 ```
 {{- else if .EmbedScript -}}
-```{{.ScriptLanguage}}
+```{{.Language}}
 {{trimSuffix "\n" .Content}}
 ```
 {{- else -}}

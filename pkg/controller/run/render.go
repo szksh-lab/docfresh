@@ -95,7 +95,7 @@ func renderFile(tpl *Template, result *TemplateInput) (string, error) {
 		if !strings.HasSuffix(result.Content, "\n") {
 			result.Content += "\n"
 		}
-		s = "```" + result.ScriptLanguage + "\n" + result.Content + "```"
+		s = "```" + result.Language + "\n" + result.Content + "```"
 	}
 	if result.DetailsTagSummary != "" {
 		s = wrapDetailsTag(s, result.DetailsTagSummary)
