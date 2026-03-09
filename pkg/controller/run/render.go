@@ -7,10 +7,11 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/suzuki-shunsuke/docfresh/pkg/container"
 	"github.com/suzuki-shunsuke/slog-error/slogerr"
 )
 
-func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls *Templates, file string, block *Block, frc *fileRunContext) (gS string, gErr error) { //nolint:cyclop
+func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls *Templates, file string, block *Block, frc *container.FileRunContext) (gS string, gErr error) { //nolint:cyclop
 	if block.Type == blockTypeText {
 		return block.Content, nil
 	}

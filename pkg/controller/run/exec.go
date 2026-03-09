@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"log/slog"
 	"path/filepath"
+
+	"github.com/suzuki-shunsuke/docfresh/pkg/container"
 )
 
-func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string, input *BlockInput, frc *fileRunContext) (*TemplateInput, error) {
+func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string, input *BlockInput, frc *container.FileRunContext) (*TemplateInput, error) {
 	if input.Command != nil {
 		if input.Command.Container != nil {
 			return execContainerCommand(ctx, frc, input.Command)
@@ -30,13 +32,13 @@ func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string,
 	return nil, errors.New("no command or file specified")
 }
 
-func execContainerCommand(ctx context.Context, frc *fileRunContext, command *Command) (*TemplateInput, error) {
+func execContainerCommand(ctx context.Context, frc *container.FileRunContext, command *Command) (*TemplateInput, error) {
 	ref := command.Container
-	state, ok := frc.containers[ref.ID]
+	state, ok := frc.Containers[ref.ID]
 	if !ok {
 		return nil, fmt.Errorf("container %q not found", ref.ID)
 	}
-	result, err := frc.engine.Exec(ctx, state.ContainerID, command.Command, command.Dir, command.Env)
+	result, err := frc.Engine.Exec(ctx, state.ContainerID, command.Command, command.Dir, command.Env)
 	if err != nil {
 		if !command.IgnoreFail {
 			state.Failed = true
@@ -46,22 +48,34 @@ func execContainerCommand(ctx context.Context, frc *fileRunContext, command *Com
 		state.Failed = true
 		return nil, fmt.Errorf("execute command in container %s: exit code %d", ref.ID, result.ExitCode)
 	}
-	result.CommandLanguage = command.CommandLanguage
-	result.OutputLanguage = command.OutputLanguage
-	result.EmbedScript = command.EmbedScript
-	result.HideOutput = command.HideOutput
-	result.HideCommand = command.HideCommand
-	return result, nil
+	ti := execResultToTemplateInput(result)
+	ti.CommandLanguage = command.CommandLanguage
+	ti.OutputLanguage = command.OutputLanguage
+	ti.EmbedScript = command.EmbedScript
+	ti.HideOutput = command.HideOutput
+	ti.HideCommand = command.HideCommand
+	return ti, nil
 }
 
-func execContainerFile(ctx context.Context, frc *fileRunContext, file *File, langs map[string]*Language) (*TemplateInput, error) {
+func execResultToTemplateInput(r *container.ExecResult) *TemplateInput {
+	return &TemplateInput{
+		Type:           "command",
+		Command:        r.Command,
+		Stdout:         r.Stdout,
+		Stderr:         r.Stderr,
+		CombinedOutput: r.CombinedOutput,
+		ExitCode:       r.ExitCode,
+	}
+}
+
+func execContainerFile(ctx context.Context, frc *container.FileRunContext, file *File, langs map[string]*Language) (*TemplateInput, error) {
 	ref := file.Container
-	state, ok := frc.containers[ref.ID]
+	state, ok := frc.Containers[ref.ID]
 	if !ok {
 		return nil, fmt.Errorf("container %q not found", ref.ID)
 	}
 	workspace := state.Input.Workspace
-	b, err := frc.engine.ReadFile(ctx, state.ContainerID, file.Path, workspace)
+	b, err := frc.Engine.ReadFile(ctx, state.ContainerID, file.Path, workspace)
 	if err != nil {
 		return nil, fmt.Errorf("read file from container %s: %w", ref.ID, err)
 	}

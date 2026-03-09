@@ -1,4 +1,4 @@
-package run
+package container
 
 import (
 	"bytes"
@@ -16,8 +16,8 @@ import (
 
 type DockerCLIEngine struct{}
 
-func (d *DockerCLIEngine) Create(ctx context.Context, input *ContainerInput, file string) (string, error) {
-	args := buildDockerCreateArgs(input, file)
+func (d *DockerCLIEngine) Create(ctx context.Context, input *Input, file string) (string, error) {
+	args := BuildDockerCreateArgs(input, file)
 	cmd := exec.CommandContext(ctx, "docker", args...)
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
@@ -28,7 +28,7 @@ func (d *DockerCLIEngine) Create(ctx context.Context, input *ContainerInput, fil
 	return containerID, nil
 }
 
-func buildDockerCreateArgs(input *ContainerInput, file string) []string {
+func BuildDockerCreateArgs(input *Input, file string) []string {
 	args := []string{"run", "-d", "--entrypoint="}
 	if input.Workspace != "" {
 		args = append(args, "--workdir="+input.Workspace)
@@ -63,8 +63,8 @@ func (d *DockerCLIEngine) CopyFiles(ctx context.Context, containerID string, fil
 	return nil
 }
 
-func (d *DockerCLIEngine) Exec(ctx context.Context, containerID string, command string, dir string, env map[string]string) (*TemplateInput, error) {
-	args := buildDockerExecArgs(containerID, command, dir, env)
+func (d *DockerCLIEngine) Exec(ctx context.Context, containerID string, command string, dir string, env map[string]string) (*ExecResult, error) {
+	args := BuildDockerExecArgs(containerID, command, dir, env)
 	cmd := exec.CommandContext(ctx, "docker", args...)
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
@@ -87,8 +87,7 @@ func (d *DockerCLIEngine) Exec(ctx context.Context, containerID string, command 
 	if cmd.ProcessState != nil {
 		exitCode = cmd.ProcessState.ExitCode()
 	}
-	return &TemplateInput{
-		Type:           "command",
+	return &ExecResult{
 		Command:        command,
 		Stdout:         stdout.String(),
 		Stderr:         stderr.String(),
@@ -97,7 +96,7 @@ func (d *DockerCLIEngine) Exec(ctx context.Context, containerID string, command 
 	}, nil
 }
 
-func buildDockerExecArgs(containerID, command, dir string, env map[string]string) []string {
+func BuildDockerExecArgs(containerID, command, dir string, env map[string]string) []string {
 	args := []string{"exec"}
 	if dir != "" {
 		args = append(args, "-w", dir)

@@ -1,4 +1,4 @@
-package run
+package container
 
 import (
 	"path/filepath"
@@ -15,13 +15,13 @@ func TestBuildDockerCreateArgs(t *testing.T) {
 	}
 	tests := []struct {
 		name  string
-		input *ContainerInput
+		input *Input
 		file  string
 		want  []string
 	}{
 		{
 			name: "basic",
-			input: &ContainerInput{
+			input: &Input{
 				ID:    "test",
 				Image: "ubuntu:latest",
 			},
@@ -30,7 +30,7 @@ func TestBuildDockerCreateArgs(t *testing.T) {
 		},
 		{
 			name: "with workspace",
-			input: &ContainerInput{
+			input: &Input{
 				ID:        "mycontainer",
 				Image:     "ubuntu:latest",
 				Workspace: "/app",
@@ -40,7 +40,7 @@ func TestBuildDockerCreateArgs(t *testing.T) {
 		},
 		{
 			name: "with volumes",
-			input: &ContainerInput{
+			input: &Input{
 				ID:      "vol",
 				Image:   "ubuntu:latest",
 				Volumes: []string{"/host:/container", "/data:/data:ro"},
@@ -50,7 +50,7 @@ func TestBuildDockerCreateArgs(t *testing.T) {
 		},
 		{
 			name: "with absolute file path",
-			input: &ContainerInput{
+			input: &Input{
 				ID:    "abs",
 				Image: "alpine:latest",
 			},
@@ -61,9 +61,9 @@ func TestBuildDockerCreateArgs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got := buildDockerCreateArgs(tt.input, tt.file)
+			got := BuildDockerCreateArgs(tt.input, tt.file)
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("buildDockerCreateArgs() mismatch (-want +got):\n%s", diff)
+				t.Errorf("BuildDockerCreateArgs() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}
@@ -103,9 +103,9 @@ func TestBuildDockerExecArgs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got := buildDockerExecArgs(tt.containerID, tt.command, tt.dir, tt.env)
+			got := BuildDockerExecArgs(tt.containerID, tt.command, tt.dir, tt.env)
 			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("buildDockerExecArgs() mismatch (-want +got):\n%s", diff)
+				t.Errorf("BuildDockerExecArgs() mismatch (-want +got):\n%s", diff)
 			}
 		})
 	}

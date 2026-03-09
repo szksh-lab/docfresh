@@ -1,4 +1,4 @@
-package run
+package langdetect
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 
 func TestDefaultScriptLanguages(t *testing.T) { //nolint:gocognit,cyclop,funlen
 	t.Parallel()
-	langs, langsByName, err := defaultScriptLanguages()
+	langs, langsByName, err := DefaultScriptLanguages()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
