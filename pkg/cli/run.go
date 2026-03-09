@@ -45,10 +45,6 @@ func runAction(ctx context.Context, logger *slogutil.Logger, args *RunArgs) erro
 		return fmt.Errorf("set log level: %w", err)
 	}
 
-	// configFilePath := args.Config
-	// if configFilePath == "" {
-	// 	configFilePath = "docfresh.yaml"
-	// }
 	fs := afero.NewOsFs()
 	ghtknEnabled, err := github.GetGHTKNEnabledFromEnv()
 	if err != nil {
@@ -64,7 +60,6 @@ func runAction(ctx context.Context, logger *slogutil.Logger, args *RunArgs) erro
 		files[file] = struct{}{}
 	}
 	return ctrl.Run(ctx, logger.Logger, &run.Input{ //nolint:wrapcheck
-		// ConfigFilePath: configFilePath,
 		Files: files,
 	})
 }
