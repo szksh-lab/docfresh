@@ -7,11 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/fatih/color"
 	"github.com/spf13/afero"
 )
-
-type colorFunc func(a ...any) string
 
 // Controller manages the initialization of docfresh configuration.
 // It provides methods to create configuration files with appropriate permissions.
@@ -23,7 +20,6 @@ type Controller struct {
 	langs       map[string]*Language
 	langsByName map[string]*Language
 	environ     []string
-	yellow      colorFunc
 }
 
 type GitHub interface {
@@ -45,6 +41,5 @@ func New(fs afero.Fs, gh GitHub) (*Controller, error) {
 		langs:       langs,
 		langsByName: langsByName,
 		environ:     os.Environ(),
-		yellow:      color.New(color.FgYellow).SprintFunc(),
 	}, nil
 }
