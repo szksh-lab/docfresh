@@ -28,7 +28,7 @@ func callHTTP(ctx context.Context, h *HTTP, httpClient *http.Client, langs map[s
 		req.Header = h.Header
 	}
 
-	resp, err := httpClient.Do(req) //nolint:gosec
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("send http request: %w", err)
 	}
