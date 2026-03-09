@@ -50,7 +50,7 @@ func buildDockerCreateArgs(input *ContainerInput, file string) []string {
 }
 
 func (d *DockerCLIEngine) CopyFiles(ctx context.Context, containerID string, files map[string]string) error {
-	for src, dest := range files {
+	for dest, src := range files {
 		cmd := exec.CommandContext(ctx, "docker", "cp", src, containerID+":"+dest)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

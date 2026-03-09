@@ -14,7 +14,7 @@ type ContainerInput struct {
 	Workspace string            `json:"workspace,omitempty" yaml:"workspace" jsonschema_description:"Working directory inside the container"`
 	Volumes   []string          `json:"volumes,omitempty" yaml:"volumes" jsonschema_description:"Volume mounts in docker format (host:container)"`
 	Env       map[string]string `json:"env,omitempty" yaml:"env" jsonschema_description:"Environment variables for the container"`
-	CopyFiles map[string]string `json:"copy_files,omitempty" yaml:"copy_files" jsonschema_description:"Files to copy into the container (host_path: container_path)"`
+	CopyFiles map[string]string `json:"copy_files,omitempty" yaml:"copy_files" jsonschema_description:"Files to copy into the container (container_path: host_path)"`
 	Command   *ContainerCommand `json:"command,omitempty" yaml:"command" jsonschema_description:"Command to run after container creation for setup"`
 }
 
