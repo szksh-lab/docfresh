@@ -26,17 +26,8 @@ func Run(ctx context.Context, logger *slogutil.Logger, env *urfave.Env) error {
 				Destination: &gFlags.LogLevel,
 				Local:       true,
 			},
-			// &cli.StringFlag{
-			// 	Name:        "config",
-			// 	Aliases:     []string{"c"},
-			// 	Usage:       "configuration file path",
-			// 	Sources:     cli.EnvVars("DOCFRESH_CONFIG"),
-			// 	Destination: &gFlags.Config,
-			// 	Local:       true,
-			// },
 		},
 		Commands: []*cli.Command{
-			// NewInit(logger, gFlags),
 			NewRun(logger, gFlags),
 		},
 	}).Run(ctx, env.Args)
