@@ -15,7 +15,8 @@ import (
 type RunArgs struct {
 	*Flags
 
-	Files []string // positional argument
+	Files             []string // positional argument
+	AllowUnknownField bool
 }
 
 // NewRun creates a new init command instance with the provided logger.
@@ -35,6 +36,13 @@ func NewRun(logger *slogutil.Logger, gFlags *Flags) *cli.Command {
 				Name:        "document file",
 				Destination: &args.Files,
 				Max:         -1,
+			},
+		},
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:        "allow-unknown-field",
+				Usage:       "Allow unknown fields in directive YAML",
+				Destination: &args.AllowUnknownField,
 			},
 		},
 	}
@@ -60,6 +68,7 @@ func runAction(ctx context.Context, logger *slogutil.Logger, args *RunArgs) erro
 		files[file] = struct{}{}
 	}
 	return ctrl.Run(ctx, logger.Logger, &run.Input{ //nolint:wrapcheck
-		Files: files,
+		Files:             files,
+		AllowUnknownField: args.AllowUnknownField,
 	})
 }
