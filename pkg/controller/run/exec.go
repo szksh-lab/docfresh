@@ -39,6 +39,9 @@ func execContainerCommand(ctx context.Context, frc *fileRunContext, command *Com
 			state.Failed = true
 			return nil, fmt.Errorf("execute command in container %s: %w", ref.ID, err)
 		}
+	} else if result.ExitCode != 0 && !command.IgnoreFail {
+		state.Failed = true
+		return nil, fmt.Errorf("execute command in container %s: exit code %d", ref.ID, result.ExitCode)
 	}
 	result.CommandLanguage = command.CommandLanguage
 	result.OutputLanguage = command.OutputLanguage
