@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "go vet ./... && go test ./... -race -covermode=atomic && golangci-lint run"
+            "command": "go vet ./... && go test ./... -race -covermode=atomic && golangci-lint run && go run ./cmd/gen-jsonschema"
           }
         ]
       }
