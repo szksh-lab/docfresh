@@ -16,6 +16,9 @@ func (c *Controller) exec(ctx context.Context, logger *slog.Logger, file string,
 		return c.execCommand(ctx, logger, file, input.Command)
 	}
 	if input.File != nil {
+		if input.File.Container != nil {
+			return execContainerFile(ctx, frc, input.File, c.langs)
+		}
 		return readFile(file, input.File, c.fs, c.langs)
 	}
 	if input.HTTP != nil {
@@ -47,6 +50,44 @@ func execContainerCommand(ctx context.Context, frc *fileRunContext, command *Com
 	result.OutputLanguage = command.OutputLanguage
 	result.EmbedScript = command.EmbedScript
 	result.Quiet = command.Quiet
+	return result, nil
+}
+
+func execContainerFile(ctx context.Context, frc *fileRunContext, file *File, langs map[string]*Language) (*TemplateInput, error) {
+	ref := file.Container
+	state, ok := frc.containers[ref.ID]
+	if !ok {
+		return nil, fmt.Errorf("container %q not found", ref.ID)
+	}
+	workspace := state.Input.Workspace
+	b, err := frc.engine.ReadFile(ctx, state.ContainerID, file.Path, workspace)
+	if err != nil {
+		return nil, fmt.Errorf("read file from container %s: %w", ref.ID, err)
+	}
+	sl := file.Language
+	if sl == "" {
+		ext := filepath.Ext(file.Path)
+		if lang, ok := langs[ext]; ok {
+			sl = lang.Language
+		}
+	}
+	content := string(b)
+	content, err = extractRange(content, file.Range)
+	if err != nil {
+		return nil, fmt.Errorf("extract range from file: %w", err)
+	}
+	result := &TemplateInput{
+		Type:     "container-file",
+		Path:     file.Path,
+		Language: sl,
+		Content:  content,
+		Vars:     file.Template.GetVars(),
+	}
+	if file.Template != nil {
+		if err := renderTemplate(content, result, file.Template.Delims); err != nil {
+			return nil, err
+		}
+	}
 	return result, nil
 }
 

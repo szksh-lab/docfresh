@@ -104,6 +104,20 @@ func buildDockerExecArgs(containerID, command, dir string, env map[string]string
 	return args
 }
 
+func (d *DockerCLIEngine) ReadFile(ctx context.Context, containerID string, path string, dir string) ([]byte, error) {
+	args := []string{"exec"}
+	if dir != "" {
+		args = append(args, "-w", dir)
+	}
+	args = append(args, containerID, "cat", path)
+	cmd := exec.CommandContext(ctx, "docker", args...)
+	out, err := cmd.Output()
+	if err != nil {
+		return nil, fmt.Errorf("docker exec cat %s: %w", path, err)
+	}
+	return out, nil
+}
+
 func (d *DockerCLIEngine) Name(ctx context.Context, containerID string) (string, error) {
 	cmd := exec.CommandContext(ctx, "docker", "inspect", "--format", "{{.Name}}", containerID)
 	out, err := cmd.Output()

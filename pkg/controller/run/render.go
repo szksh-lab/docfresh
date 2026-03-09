@@ -75,7 +75,7 @@ func appendEndComment(content, s, endComment string) string {
 
 func render(tpl *Template, result *TemplateInput) (string, error) {
 	switch result.Type {
-	case "local-file", "http", "github-content":
+	case "local-file", "http", "github-content", "container-file":
 		return renderFile(tpl, result)
 	case "command":
 		result.Vars = tpl.Vars
@@ -114,7 +114,7 @@ func defaultDetailsTagSummary(result *TemplateInput) string {
 	switch result.Type {
 	case "command":
 		return "Output"
-	case "local-file":
+	case "local-file", "container-file":
 		return result.Path
 	case "http":
 		return result.URL

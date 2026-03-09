@@ -51,12 +51,6 @@ The `command` configuration is mostly the same as in `begin` directive, with the
 
 By default, containers are removed after file processing finishes.
 If a command fails, the container used to run that command is not removed and remains for debugging.
-Instructions for attaching to or removing the container will be suggested:
-
-```
-The container <container id in docfresh> (<real container id>) isn't removed.
-You can attach to it with `docker exec` or remove it with `docker rm -f <real container id>`.
-```
 
 If `keep: true` is specified, the container will not be removed.
 This is mainly intended for temporary troubleshooting.
@@ -69,6 +63,26 @@ Containers are automatically assigned labels so that they can be identified as c
 - `docfresh.file_path`: the file path passed as an argument to `docfresh run`. This may be either a relative or an absolute path.
 - `docfresh.absolute_file_path`: the absolute file path.
 - `docfresh.id`: the container ID used internally by docfresh.
+
+You can search for containers created by docfresh using these labels.
+
+<!-- docfresh begin
+command:
+  command: |
+    docker ps --filter "label=docfresh.id"
+  quiet: true
+-->
+```sh
+docker ps --filter "label=docfresh.id"
+```
+
+<!-- docfresh end -->
+
+Remove all containers created by docfresh:
+
+```sh
+docker ps --filter "label=docfresh.id" -q | xargs docker rm -f
+```
 
 ## Engine
 
