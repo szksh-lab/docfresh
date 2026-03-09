@@ -16,7 +16,8 @@ type ParseOption struct {
 // YAMLError wraps a YAML parse error so callers can detect it with errors.As
 // and print the multi-line position information with fmt.Fprintln.
 type YAMLError struct {
-	err error
+	err           error
+	DirectiveLine int // 1-based line number of the directive in the file
 }
 
 func (e *YAMLError) Error() string {
@@ -75,6 +76,10 @@ func ParseFile(content string, opt *ParseOption) ([]*Block, error) { //nolint:cy
 		if containerIdx != -1 && (beginIdx == -1 || containerIdx < beginIdx) && (endIdx == -1 || containerIdx < endIdx) && (postIdx == -1 || containerIdx < postIdx) {
 			block, newPos, err := parseContainerBlock(content, pos, containerIdx, opt)
 			if err != nil {
+				var yamlErr *YAMLError
+				if errors.As(err, &yamlErr) {
+					yamlErr.DirectiveLine = lineNumber(content, pos+containerIdx)
+				}
 				return nil, err
 			}
 			block.LineNumber = lineNumber(content, pos+containerIdx)
@@ -90,6 +95,10 @@ func ParseFile(content string, opt *ParseOption) ([]*Block, error) { //nolint:cy
 		if postIdx != -1 && (beginIdx == -1 || postIdx < beginIdx) && (endIdx == -1 || postIdx < endIdx) {
 			block, newPos, err := parsePostBlock(content, pos, postIdx, opt)
 			if err != nil {
+				var yamlErr *YAMLError
+				if errors.As(err, &yamlErr) {
+					yamlErr.DirectiveLine = lineNumber(content, pos+postIdx)
+				}
 				return nil, err
 			}
 			block.LineNumber = lineNumber(content, pos+postIdx)
@@ -125,6 +134,10 @@ func ParseFile(content string, opt *ParseOption) ([]*Block, error) { //nolint:cy
 		yamlStr = strings.TrimSpace(yamlStr)
 		var input BlockInput
 		if err := unmarshalYAML(yamlStr, &input, opt); err != nil {
+			var yamlErr *YAMLError
+			if errors.As(err, &yamlErr) {
+				yamlErr.DirectiveLine = lineNumber(content, beginStart)
+			}
 			return nil, fmt.Errorf("failed to parse YAML in begin comment: %w", err)
 		}
 
