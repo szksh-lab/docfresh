@@ -13,7 +13,7 @@ id: mycontainer
 engine: docker-cli
 image: ubuntu:latest
 -->`
-	block, pos, err := parseContainerBlock(content, 0, 0)
+	block, pos, err := parseContainerBlock(content, 0, 0, nil)
 	if err != nil {
 		t.Fatalf("parseContainerBlock() error = %v", err)
 	}
@@ -47,7 +47,7 @@ image: ubuntu:latest
 -->
 More text
 `
-	blocks, err := parseFile(content)
+	blocks, err := ParseFile(content, nil)
 	if err != nil {
 		t.Fatalf("parseFile() error = %v", err)
 	}

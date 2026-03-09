@@ -29,6 +29,7 @@ func Run(ctx context.Context, logger *slogutil.Logger, env *urfave.Env) error {
 		},
 		Commands: []*cli.Command{
 			NewRun(logger, gFlags),
+			NewValidate(logger, gFlags),
 		},
 	}).Run(ctx, env.Args)
 }
