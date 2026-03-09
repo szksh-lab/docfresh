@@ -41,7 +41,7 @@ command: |
 <!-- docfresh begin
 command:
   command: echo foo > foo.txt
-  quiet: true
+  hide_output: true
 -->
 ```sh
 echo foo > foo.txt

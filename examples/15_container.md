@@ -70,7 +70,7 @@ You can search for containers created by docfresh using these labels.
 command:
   command: |
     docker ps --filter "label=docfresh.id"
-  quiet: true
+  hide_output: true
 -->
 ```sh
 docker ps --filter "label=docfresh.id"

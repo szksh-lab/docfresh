@@ -277,14 +277,14 @@ SIGINT was sent
 ```
 <!-- docfresh end -->
 
-## command.quiet
+## command.hide_output
 
 If this is true, the command output isn't outputted to documents.
 
 <!-- docfresh begin
 command:
   command: echo hello
-  quiet: true
+  hide_output: true
 -->
 ```sh
 echo hello

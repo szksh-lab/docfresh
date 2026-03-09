@@ -342,7 +342,7 @@ type Command struct {
 	Container       *ContainerRef     `json:"container,omitempty" yaml:"container" jsonschema_description:"Run the command inside a container. Specify the container ID defined in a docfresh container block"`
 	IgnoreFail      bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
 	EmbedScript     bool              `json:"embed_script,omitempty" yaml:"embed_script" jsonschema_description:"If this is true, the content of script is embedded into documents."`
-	Quiet           bool              `json:"quiet,omitempty" jsonschema_description:"If this is true, the command output isn't outputted to documents."`
+	HideOutput      bool              `json:"hide_output,omitempty" yaml:"hide_output" jsonschema_description:"If this is true, the command output isn't outputted to documents."`
 	HideCommand     bool              `json:"hide_command,omitempty" yaml:"hide_command" jsonschema_description:"If this is true, the command isn't outputted to documents."`
 }
 
@@ -401,7 +401,7 @@ type TemplateInput struct {
 	//
 	EmbedScript       bool
 	CodeBlock         bool
-	Quiet             bool
+	HideOutput        bool
 	HideCommand       bool
 	DetailsTagSummary string
 }
