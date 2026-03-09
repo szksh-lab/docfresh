@@ -104,6 +104,16 @@ func buildDockerExecArgs(containerID, command, dir string, env map[string]string
 	return args
 }
 
+func (d *DockerCLIEngine) Name(ctx context.Context, containerID string) (string, error) {
+	cmd := exec.CommandContext(ctx, "docker", "inspect", "--format", "{{.Name}}", containerID)
+	out, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("docker inspect %s: %w", containerID, err)
+	}
+	name := strings.TrimSpace(string(out))
+	return strings.TrimPrefix(name, "/"), nil
+}
+
 func (d *DockerCLIEngine) Remove(ctx context.Context, containerID string) error {
 	cmd := exec.CommandContext(ctx, "docker", "rm", "-f", containerID)
 	cmd.Stdout = os.Stdout

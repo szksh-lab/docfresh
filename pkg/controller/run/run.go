@@ -163,16 +163,20 @@ func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, f
 
 func (c *Controller) cleanupContainers(ctx context.Context, logger *slog.Logger, frc *fileRunContext) {
 	for id, state := range frc.containers {
+		containerName := state.ContainerID
+		if name, err := frc.engine.Name(ctx, state.ContainerID); err == nil {
+			containerName = name
+		}
 		if state.Input.Keep {
 			logger.Warn(fmt.Sprintf(
 				"Container %s (internal id: %s) isn't removed (keep: true)",
-				state.ContainerID, id))
+				containerName, id))
 			continue
 		}
 		if state.Failed {
 			logger.Warn(fmt.Sprintf(
 				"The container %s (internal id: %s) isn't removed as command failed.\nYou can debug in the container by `docker exec` or remove it with `docker rm -f %s`",
-				state.ContainerID, id, state.ContainerID))
+				containerName, id, containerName))
 			continue
 		}
 		if err := frc.engine.Remove(ctx, state.ContainerID); err != nil {

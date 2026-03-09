@@ -39,6 +39,7 @@ type ContainerEngine interface {
 	CopyFiles(ctx context.Context, containerID string, files map[string]string) error
 	Exec(ctx context.Context, containerID string, command string, dir string, env map[string]string) (*TemplateInput, error)
 	Remove(ctx context.Context, containerID string) error
+	Name(ctx context.Context, containerID string) (string, error)
 }
 
 type fileRunContext struct {
