@@ -49,7 +49,7 @@ func execContainerCommand(ctx context.Context, frc *fileRunContext, command *Com
 	result.CommandLanguage = command.CommandLanguage
 	result.OutputLanguage = command.OutputLanguage
 	result.EmbedScript = command.EmbedScript
-	result.Quiet = command.Quiet
+	result.HideOutput = command.HideOutput
 	result.HideCommand = command.HideCommand
 	return result, nil
 }

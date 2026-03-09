@@ -14,7 +14,7 @@
 {{- end}}
 
 {{end -}}
-{{if not .Quiet -}}
+{{if not .HideOutput -}}
 {{if .DetailsTagSummary -}}
 <details>
 <summary>{{.DetailsTagSummary}}</summary>
