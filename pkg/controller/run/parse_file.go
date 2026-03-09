@@ -13,12 +13,32 @@ type ParseOption struct {
 	DisallowUnknownField bool
 }
 
+// YAMLError wraps a YAML parse error so callers can detect it with errors.As
+// and print the multi-line position information with fmt.Fprintln.
+type YAMLError struct {
+	err error
+}
+
+func (e *YAMLError) Error() string {
+	return e.err.Error()
+}
+
+func (e *YAMLError) Unwrap() error {
+	return e.err
+}
+
 func unmarshalYAML(yamlStr string, v any, opt *ParseOption) error {
 	if opt != nil && opt.DisallowUnknownField {
 		dec := yaml.NewDecoder(strings.NewReader(yamlStr), yaml.DisallowUnknownField())
-		return dec.Decode(v) //nolint:wrapcheck
+		if err := dec.Decode(v); err != nil {
+			return &YAMLError{err: err}
+		}
+		return nil
 	}
-	return yaml.Unmarshal([]byte(yamlStr), v) //nolint:wrapcheck
+	if err := yaml.Unmarshal([]byte(yamlStr), v); err != nil {
+		return &YAMLError{err: err}
+	}
+	return nil
 }
 
 const (

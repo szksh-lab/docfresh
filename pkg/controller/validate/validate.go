@@ -2,6 +2,7 @@ package validate
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -49,15 +50,30 @@ func (c *Controller) validateFile(logger *slog.Logger, file string, allowUnknown
 		return nil
 	}
 	if !allowUnknownField {
+		var yamlErr *run.YAMLError
+		if errors.As(err, &yamlErr) {
+			fmt.Fprintln(c.stderr, yamlErr)
+			return errors.New("parse file failed")
+		}
 		return fmt.Errorf("parse file: %w", err)
 	}
 	// Try normal parse to see if the error was about unknown fields.
 	if _, normalErr := run.ParseFile(content, nil); normalErr != nil {
 		// Normal parse also fails — real YAML error.
+		var yamlErr *run.YAMLError
+		if errors.As(err, &yamlErr) {
+			fmt.Fprintln(c.stderr, yamlErr)
+			return errors.New("parse file failed")
+		}
 		return fmt.Errorf("parse file: %w", err)
 	}
 	// Normal parse succeeded — the error was about unknown fields.
-	logger.Warn("unknown fields detected", "file", file, "error", err)
+	var yamlErr *run.YAMLError
+	if errors.As(err, &yamlErr) {
+		fmt.Fprintln(c.stderr, yamlErr)
+	} else {
+		logger.Warn("unknown fields detected", "file", file, "error", err)
+	}
 	fmt.Fprintf(c.stderr, "%s: valid (with warnings)\n", file)
 	return nil
 }
