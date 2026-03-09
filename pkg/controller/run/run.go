@@ -52,7 +52,7 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 		return fmt.Errorf("read a file: %w", err)
 	}
 	bs := string(b)
-	blocks, err := parseFile(string(b))
+	blocks, err := ParseFile(string(b), nil)
 	if err != nil {
 		return fmt.Errorf("parse a file: %w", err)
 	}

@@ -268,7 +268,7 @@ func TestParseFile(t *testing.T) { //nolint:funlen,maintidx
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := parseFile(tt.content)
+			got, err := ParseFile(tt.content, nil)
 			if tt.wantErr != "" {
 				if err == nil {
 					t.Fatal("expected error but got nil")
