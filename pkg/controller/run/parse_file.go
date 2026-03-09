@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	beginMarker = "<!-- docfresh begin"
-	endMarker   = "<!-- docfresh end -->"
-	postMarker  = "<!-- docfresh post"
+	beginMarker     = "<!-- docfresh begin"
+	endMarker       = "<!-- docfresh end -->"
+	postMarker      = "<!-- docfresh post"
+	containerMarker = "<!-- docfresh container"
 )
 
 // lineNumber returns the 1-based line number for the given byte position in content.
@@ -20,7 +21,7 @@ func lineNumber(content string, pos int) int {
 }
 
 // parseFile parses a file and returns a list of blocks.
-func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen
+func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen,gocognit,gocyclo
 	codeBlocks := findCodeBlockRanges(content)
 	codeBlocks = append(codeBlocks, findInlineCodeRanges(content, codeBlocks)...)
 	var blocks []*Block
@@ -29,11 +30,27 @@ func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen
 		beginIdx := indexOutsideCodeBlocks(content, beginMarker, pos, codeBlocks)
 		endIdx := indexOutsideCodeBlocks(content, endMarker, pos, codeBlocks)
 		postIdx := indexOutsideCodeBlocks(content, postMarker, pos, codeBlocks)
+		containerIdx := indexOutsideCodeBlocks(content, containerMarker, pos, codeBlocks)
 
 		// No more markers — emit remaining text and break.
-		if beginIdx == -1 && endIdx == -1 && postIdx == -1 {
+		if beginIdx == -1 && endIdx == -1 && postIdx == -1 && containerIdx == -1 {
 			blocks = appendText(blocks, content[pos:])
 			break
+		}
+
+		// Check if container marker comes first.
+		if containerIdx != -1 && (beginIdx == -1 || containerIdx < beginIdx) && (endIdx == -1 || containerIdx < endIdx) && (postIdx == -1 || containerIdx < postIdx) {
+			block, newPos, err := parseContainerBlock(content, pos, containerIdx)
+			if err != nil {
+				return nil, err
+			}
+			block.LineNumber = lineNumber(content, pos+containerIdx)
+			if containerIdx > 0 {
+				blocks = appendText(blocks, content[pos:pos+containerIdx])
+			}
+			blocks = append(blocks, block)
+			pos = newPos
+			continue
 		}
 
 		// Check if post marker comes first.
@@ -94,7 +111,7 @@ func parseFile(content string) ([]*Block, error) { //nolint:cyclop,funlen
 		endComment := content[beginCommentEnd+endIdx : endCommentEnd]
 
 		blocks = append(blocks, &Block{
-			Type:         "block",
+			Type:         blockTypeBlock,
 			Input:        &input,
 			BeginComment: beginComment,
 			EndComment:   endComment,
@@ -123,12 +140,35 @@ func parsePostBlock(content string, pos, postIdx int) (*Block, int, error) {
 	}
 
 	return &Block{
-		Type:    "post",
+		Type:    blockTypePost,
 		Content: postComment,
 		Input: &BlockInput{
 			Command: cmd.ToCommand(),
 		},
 	}, postCommentEnd, nil
+}
+
+func parseContainerBlock(content string, pos, containerIdx int) (*Block, int, error) {
+	containerStart := pos + containerIdx
+	closeIdx := strings.Index(content[containerStart+len(containerMarker):], "-->")
+	if closeIdx == -1 {
+		return nil, 0, errors.New("unclosed <!-- docfresh container comment: missing -->")
+	}
+	containerCommentEnd := containerStart + len(containerMarker) + closeIdx + len("-->")
+	containerComment := content[containerStart:containerCommentEnd]
+
+	yamlStr := content[containerStart+len(containerMarker) : containerStart+len(containerMarker)+closeIdx]
+	yamlStr = strings.TrimSpace(yamlStr)
+	input := &ContainerInput{}
+	if err := yaml.Unmarshal([]byte(yamlStr), input); err != nil {
+		return nil, 0, fmt.Errorf("failed to parse YAML in container comment: %w", err)
+	}
+
+	return &Block{
+		Type:           blockTypeContainer,
+		Content:        containerComment,
+		ContainerInput: input,
+	}, containerCommentEnd, nil
 }
 
 // countLeadingBackticks returns the number of leading backtick characters in s.
@@ -303,7 +343,7 @@ func appendText(blocks []*Block, text string) []*Block {
 		return blocks
 	}
 	return append(blocks, &Block{
-		Type:    "text",
+		Type:    blockTypeText,
 		Content: text,
 	})
 }
