@@ -19,9 +19,7 @@ file/invalid.md:3
 >  1 | unknown_field: true
        ^
    2 | command:
-   3 |   ignore_fail: true
-   4 |   command: docfresh validate 90_validate.md
-   5 | 
+   3 |   command: echo hello
 Jan  2 15:04:05.999 ERR docfresh failed program=docfresh version=v3.0.0-local error="validate file file/invalid.md: parse file failed"
 ```
 <!-- docfresh end -->
