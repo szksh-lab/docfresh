@@ -10,6 +10,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/mattn/go-colorable"
 )
 
 type DockerCLIEngine struct{}
@@ -67,8 +69,11 @@ func (d *DockerCLIEngine) Exec(ctx context.Context, containerID string, command 
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 	combinedOutput := &bytes.Buffer{}
-	cmd.Stdout = io.MultiWriter(os.Stdout, stdout, combinedOutput)
-	cmd.Stderr = io.MultiWriter(os.Stderr, stderr, combinedOutput)
+	uncolorizedStdout := colorable.NewNonColorable(stdout)
+	uncolorizedStderr := colorable.NewNonColorable(stderr)
+	uncolorizedCombinedOutput := colorable.NewNonColorable(combinedOutput)
+	cmd.Stdout = io.MultiWriter(os.Stdout, uncolorizedStdout, uncolorizedCombinedOutput)
+	cmd.Stderr = io.MultiWriter(os.Stderr, uncolorizedStderr, uncolorizedCombinedOutput)
 	fmt.Fprintln(os.Stderr, "+", command)
 	exitCode := 0
 	if err := cmd.Run(); err != nil {
