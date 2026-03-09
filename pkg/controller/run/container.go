@@ -35,7 +35,7 @@ type ContainerState struct {
 }
 
 type ContainerEngine interface {
-	Create(ctx context.Context, input *ContainerInput) (containerID string, err error)
+	Create(ctx context.Context, input *ContainerInput, file string) (containerID string, err error)
 	CopyFiles(ctx context.Context, containerID string, files map[string]string) error
 	Exec(ctx context.Context, containerID string, command string, dir string, env map[string]string) (*TemplateInput, error)
 	Remove(ctx context.Context, containerID string) error

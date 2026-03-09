@@ -86,7 +86,7 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 		}
 		logger := logger.With("line_number", block.LineNumber)
 		if block.Type == blockTypeContainer {
-			s, err := c.handleContainerBlock(ctx, logger, frc, block)
+			s, err := c.handleContainerBlock(ctx, logger, frc, block, file)
 			if err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 	return nil
 }
 
-func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, frc *fileRunContext, block *Block) (string, error) {
+func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, frc *fileRunContext, block *Block, file string) (string, error) {
 	input := block.ContainerInput
 	if err := validateContainerInput(input, frc.containers); err != nil {
 		return "", fmt.Errorf("validate container: %w", err)
@@ -131,7 +131,7 @@ func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, f
 		frc.engine = engine
 	}
 	fmt.Fprintf(c.stderr, "> container %s (image: %s)\n", input.ID, input.Image)
-	containerID, err := engine.Create(ctx, input)
+	containerID, err := engine.Create(ctx, input, file)
 	if err != nil {
 		return "", fmt.Errorf("create container %s: %w", input.ID, err)
 	}

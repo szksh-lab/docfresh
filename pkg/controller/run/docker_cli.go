@@ -8,13 +8,14 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
 type DockerCLIEngine struct{}
 
-func (d *DockerCLIEngine) Create(ctx context.Context, input *ContainerInput) (string, error) {
-	args := buildDockerCreateArgs(input)
+func (d *DockerCLIEngine) Create(ctx context.Context, input *ContainerInput, file string) (string, error) {
+	args := buildDockerCreateArgs(input, file)
 	cmd := exec.CommandContext(ctx, "docker", args...)
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
@@ -25,7 +26,7 @@ func (d *DockerCLIEngine) Create(ctx context.Context, input *ContainerInput) (st
 	return containerID, nil
 }
 
-func buildDockerCreateArgs(input *ContainerInput) []string {
+func buildDockerCreateArgs(input *ContainerInput, file string) []string {
 	args := []string{"run", "-d", "--entrypoint="}
 	if input.Workspace != "" {
 		args = append(args, "--workdir="+input.Workspace)
@@ -35,6 +36,14 @@ func buildDockerCreateArgs(input *ContainerInput) []string {
 	}
 	for k, v := range input.Env {
 		args = append(args, "-e", k+"="+v)
+	}
+	args = append(args, "--label=docfresh.file_path="+file)
+	absPath, err := filepath.Abs(file)
+	if err == nil {
+		args = append(args, "--label=docfresh.absolute_file_path="+absPath)
+	}
+	if input.ID != "" {
+		args = append(args, "--label=docfresh.id="+input.ID)
 	}
 	args = append(args, input.Image, "tail", "-f", "/dev/null")
 	return args
