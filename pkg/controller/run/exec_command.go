@@ -133,6 +133,7 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 		ExitCode:        cmd.ProcessState.ExitCode(),
 		Content:         content,
 		Quiet:           command.Quiet,
+		HideCommand:     command.HideCommand,
 	}, nil
 }
 

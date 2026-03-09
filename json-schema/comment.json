@@ -112,6 +112,10 @@
         "quiet": {
           "type": "boolean",
           "description": "If this is true, the command output isn't outputted to documents."
+        },
+        "hide_command": {
+          "type": "boolean",
+          "description": "If this is true, the command isn't outputted to documents."
         }
       },
       "additionalProperties": false,

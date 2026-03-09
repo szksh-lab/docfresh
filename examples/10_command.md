@@ -292,6 +292,18 @@ echo hello
 
 <!-- docfresh end -->
 
+## command.hide_command
+
+If this is true, the command isn't outputted to documents, only the command output is shown.
+
+<!-- docfresh begin
+command:
+  command: echo hello
+  hide_command: true
+-->
+hello
+<!-- docfresh end -->
+
 ## details_tag
 
 Allow wrapping output in HTML `<details>` tags so large outputs can be collapsed by default.
