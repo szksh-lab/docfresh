@@ -128,11 +128,11 @@ Hello
 
 `command_language` and `shell` are automatically detected in case of some popular languages such as Go and Python.
 
-[languages.yaml](../pkg/controller/run/languages.yaml)
+[languages.yaml](../pkg/langdetect/languages.yaml)
 
 <!-- docfresh begin
 file:
-  path: ../pkg/controller/run/languages.yaml
+  path: ../pkg/langdetect/languages.yaml
 code_block: true
 -->
 ```yaml

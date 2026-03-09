@@ -10,6 +10,7 @@ import (
 	"text/template"
 
 	"github.com/spf13/afero"
+	"github.com/suzuki-shunsuke/docfresh/pkg/container"
 	"github.com/suzuki-shunsuke/slog-error/slogerr"
 )
 
@@ -118,17 +119,17 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 	return nil
 }
 
-func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, frc *fileRunContext, block *Block, file string) (string, error) {
+func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, frc *container.FileRunContext, block *Block, file string) (string, error) {
 	input := block.ContainerInput
-	if err := validateContainerInput(input, frc.containers); err != nil {
+	if err := validateContainerInput(input, frc.Containers); err != nil {
 		return "", fmt.Errorf("validate container: %w", err)
 	}
 	engine, err := newContainerEngine(input.Engine)
 	if err != nil {
 		return "", err
 	}
-	if frc.engine == nil {
-		frc.engine = engine
+	if frc.Engine == nil {
+		frc.Engine = engine
 	}
 	fmt.Fprintf(c.stderr, "> container %s (image: %s)\n", input.ID, input.Image)
 	containerID, err := engine.Create(ctx, input, file)
@@ -139,7 +140,7 @@ func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, f
 		Input:       input,
 		ContainerID: containerID,
 	}
-	frc.containers[input.ID] = state
+	frc.Containers[input.ID] = state
 
 	if len(input.CopyFiles) > 0 {
 		if err := engine.CopyFiles(ctx, containerID, input.CopyFiles); err != nil {
@@ -161,10 +162,10 @@ func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, f
 	return block.Content, nil
 }
 
-func (c *Controller) cleanupContainers(ctx context.Context, logger *slog.Logger, frc *fileRunContext) {
-	for id, state := range frc.containers {
+func (c *Controller) cleanupContainers(ctx context.Context, logger *slog.Logger, frc *container.FileRunContext) {
+	for id, state := range frc.Containers {
 		containerName := state.ContainerID
-		if name, err := frc.engine.Name(ctx, state.ContainerID); err == nil {
+		if name, err := frc.Engine.Name(ctx, state.ContainerID); err == nil {
 			containerName = name
 		}
 		if state.Input.Keep {
@@ -179,7 +180,7 @@ func (c *Controller) cleanupContainers(ctx context.Context, logger *slog.Logger,
 				containerName, id, containerName))
 			continue
 		}
-		if err := frc.engine.Remove(ctx, state.ContainerID); err != nil {
+		if err := frc.Engine.Remove(ctx, state.ContainerID); err != nil {
 			logger.Error("remove container", "container_id", id, "error", err)
 		}
 	}

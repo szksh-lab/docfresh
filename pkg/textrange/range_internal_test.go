@@ -1,4 +1,4 @@
-package run
+package textrange
 
 import (
 	"testing"
@@ -97,7 +97,7 @@ func TestExtractRange(t *testing.T) { //nolint:funlen
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := extractRange(tt.content, tt.r)
+			got, err := ExtractRange(tt.content, tt.r)
 			if tt.wantErr {
 				if err == nil {
 					t.Fatal("expected error but got nil")

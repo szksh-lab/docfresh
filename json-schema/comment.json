@@ -98,7 +98,7 @@
           "description": "Pairs of environment variable names and values"
         },
         "container": {
-          "$ref": "#/$defs/ContainerRef",
+          "$ref": "#/$defs/Ref",
           "description": "Run the command inside a container. Specify the container ID defined in a docfresh container block"
         },
         "ignore_fail": {
@@ -120,19 +120,6 @@
       },
       "additionalProperties": false,
       "type": "object"
-    },
-    "ContainerRef": {
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "ID of the container to execute the command in"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "id"
-      ]
     },
     "Delims": {
       "properties": {
@@ -185,7 +172,7 @@
           "description": "Language of the file. This is used for markdown's fenced code block. This is automatically detected from the file extension by default"
         },
         "container": {
-          "$ref": "#/$defs/ContainerRef",
+          "$ref": "#/$defs/Ref",
           "description": "Read the file from a container. Specify the container ID defined in a docfresh container block"
         }
       },
@@ -297,6 +284,19 @@
       },
       "additionalProperties": false,
       "type": "object"
+    },
+    "Ref": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of the container to execute the command in"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id"
+      ]
     },
     "Template": {
       "properties": {
