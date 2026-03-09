@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/mattn/go-colorable"
 	"github.com/spf13/afero"
 )
 
@@ -106,8 +107,11 @@ func (c *Controller) execCommand(ctx context.Context, logger *slog.Logger, file 
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 	combinedOutput := &bytes.Buffer{}
-	cmd.Stdout = io.MultiWriter(os.Stdout, stdout, combinedOutput)
-	cmd.Stderr = io.MultiWriter(os.Stderr, stderr, combinedOutput)
+	uncolorizedStdout := colorable.NewNonColorable(stdout)
+	uncolorizedStderr := colorable.NewNonColorable(stderr)
+	uncolorizedCombinedOutput := colorable.NewNonColorable(combinedOutput)
+	cmd.Stdout = io.MultiWriter(os.Stdout, uncolorizedStdout, uncolorizedCombinedOutput)
+	cmd.Stderr = io.MultiWriter(os.Stderr, uncolorizedStderr, uncolorizedCombinedOutput)
 	setCancel(logger, cmd, time.Duration(command.TimeoutSigkill)*time.Second)
 	cmd.Env = getEnv(command.Env, c.environ)
 	fmt.Fprintln(os.Stderr, "+", command.Command)
