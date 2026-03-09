@@ -46,7 +46,7 @@ func (c *Controller) Run(ctx context.Context, logger *slog.Logger, input *Input)
 	return nil
 }
 
-func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templates, file string) (gErr error) { //nolint:cyclop
+func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templates, file string) (gErr error) { //nolint:cyclop,funlen
 	b, err := afero.ReadFile(c.fs, file)
 	if err != nil {
 		return fmt.Errorf("read a file: %w", err)
@@ -56,6 +56,13 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 	if err != nil {
 		return fmt.Errorf("parse a file: %w", err)
 	}
+
+	frc := newFileRunContext()
+
+	// Defer container cleanup.
+	defer func() {
+		c.cleanupContainers(ctx, logger, frc)
+	}()
 
 	var postBlocks []*Block
 	defer func() {
@@ -73,17 +80,25 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 
 	var contentBuilder strings.Builder
 	for _, block := range blocks {
-		if block.Type == "text" {
+		if block.Type == blockTypeText {
 			contentBuilder.WriteString(block.Content)
 			continue
 		}
 		logger := logger.With("line_number", block.LineNumber)
-		if block.Type == "post" {
+		if block.Type == blockTypeContainer {
+			s, err := c.handleContainerBlock(ctx, logger, frc, block)
+			if err != nil {
+				return err
+			}
+			contentBuilder.WriteString(s)
+			continue
+		}
+		if block.Type == blockTypePost {
 			contentBuilder.WriteString(block.Content)
 			postBlocks = append(postBlocks, block)
 			continue
 		}
-		s, err := c.renderBlock(ctx, logger, tpls, file, block)
+		s, err := c.renderBlock(ctx, logger, tpls, file, block, frc)
 		if err != nil {
 			return err
 		}
@@ -103,14 +118,81 @@ func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templat
 	return nil
 }
 
+func (c *Controller) handleContainerBlock(ctx context.Context, _ *slog.Logger, frc *fileRunContext, block *Block) (string, error) {
+	input := block.ContainerInput
+	if err := validateContainerInput(input, frc.containers); err != nil {
+		return "", fmt.Errorf("validate container: %w", err)
+	}
+	engine, err := newContainerEngine(input.Engine)
+	if err != nil {
+		return "", err
+	}
+	if frc.engine == nil {
+		frc.engine = engine
+	}
+	fmt.Fprintf(c.stderr, "> container %s (image: %s)\n", input.ID, input.Image)
+	containerID, err := engine.Create(ctx, input)
+	if err != nil {
+		return "", fmt.Errorf("create container %s: %w", input.ID, err)
+	}
+	state := &ContainerState{
+		Input:       input,
+		ContainerID: containerID,
+	}
+	frc.containers[input.ID] = state
+
+	if len(input.CopyFiles) > 0 {
+		if err := engine.CopyFiles(ctx, containerID, input.CopyFiles); err != nil {
+			state.Failed = true
+			return "", fmt.Errorf("copy files to container %s: %w", input.ID, err)
+		}
+	}
+	if input.Command != nil {
+		cmd := input.Command.Command
+		if input.Command.Script != "" {
+			cmd = input.Command.Script
+		}
+		fmt.Fprintf(c.stderr, "> container %s setup command\n", input.ID)
+		if _, err := engine.Exec(ctx, containerID, cmd, input.Command.Dir, nil); err != nil {
+			state.Failed = true
+			return "", fmt.Errorf("execute setup command in container %s: %w", input.ID, err)
+		}
+	}
+	return block.Content, nil
+}
+
+func (c *Controller) cleanupContainers(ctx context.Context, logger *slog.Logger, frc *fileRunContext) {
+	for id, state := range frc.containers {
+		if state.Input.Keep {
+			fmt.Fprintf(c.stderr, "Container %s (%s) is kept (keep: true)\n", id, state.ContainerID)
+			continue
+		}
+		if state.Failed {
+			fmt.Fprintf(c.stderr, "The container %s (%s) isn't removed.\nYou can attach to it with `docker exec` or remove it with `docker rm -f %s`.\n", id, state.ContainerID, state.ContainerID)
+			continue
+		}
+		if err := frc.engine.Remove(ctx, state.ContainerID); err != nil {
+			logger.Error("remove container", "container_id", id, "error", err)
+		}
+	}
+}
+
+const (
+	blockTypeText      = "text"
+	blockTypeBlock     = "block"
+	blockTypePost      = "post"
+	blockTypeContainer = "container"
+)
+
 type Block struct {
-	// text, code block
-	Type         string
-	Content      string
-	Input        *BlockInput
-	BeginComment string
-	EndComment   string
-	LineNumber   int // 1-based line number of the begin/post marker
+	// text, block, post, container
+	Type           string
+	Content        string
+	Input          *BlockInput
+	ContainerInput *ContainerInput
+	BeginComment   string
+	EndComment     string
+	LineNumber     int // 1-based line number of the begin/post marker
 }
 
 type BlockInput struct {
@@ -248,6 +330,7 @@ type Command struct {
 	TimeoutSigkill  int               `json:"timeout_sigkill,omitempty" jsonschema_description:"If this timeout is exceeded, the signal SIGKILL is sent to the process. The default value is 1000 hours, meaning SIGKILL isn't sent usually, so the process should be terminated gracefully by SIGINT."`
 	Shell           []string          `json:"shell,omitempty" jsonschema_description:"The command executing command or script. If command is set, the default value is 'bash -c'. If script is set, the default value is decided by script's file extension"`
 	Env             map[string]string `json:"env,omitempty" jsonschema_description:"Pairs of environment variable names and values"`
+	Container       *ContainerRef     `json:"container,omitempty" yaml:"container" jsonschema_description:"Run the command inside a container. Specify the container ID defined in a docfresh container block"`
 	IgnoreFail      bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
 	EmbedScript     bool              `json:"embed_script,omitempty" yaml:"embed_script" jsonschema_description:"If this is true, the content of script is embedded into documents."`
 	Quiet           bool              `json:"quiet,omitempty" jsonschema_description:"If this is true, the command output isn't outputted to documents."`

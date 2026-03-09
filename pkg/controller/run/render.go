@@ -10,8 +10,8 @@ import (
 	"github.com/suzuki-shunsuke/slog-error/slogerr"
 )
 
-func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls *Templates, file string, block *Block) (gS string, gErr error) { //nolint:cyclop
-	if block.Type == "text" {
+func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls *Templates, file string, block *Block, frc *fileRunContext) (gS string, gErr error) { //nolint:cyclop
+	if block.Type == blockTypeText {
 		return block.Content, nil
 	}
 	if block.Input == nil {
@@ -39,7 +39,7 @@ func (c *Controller) renderBlock(ctx context.Context, logger *slog.Logger, tpls 
 	if block.Input.Command != nil {
 		fmt.Fprintf(c.stderr, "> command %s:%d\n", file, block.LineNumber)
 	}
-	result, err := c.exec(ctx, logger, file, block.Input)
+	result, err := c.exec(ctx, logger, file, block.Input, frc)
 	if err != nil {
 		return "", fmt.Errorf("execute a command: %w", err)
 	}
