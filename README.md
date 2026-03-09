@@ -13,6 +13,9 @@ It prevents document from being outdated.
 - Fetch documents from local and remote files and embed them into a document
   - You can share documents across multiple files and repositories
   - You can separate code snippets from the document and apply linters and formatters to them
+- [Allow running commands in containers](examples/15_container.md)
+  - Securely run commands in isolated environments
+  - Consistent Command Results across different machines
 
 Note that docfresh is intended to update markdown files.
 Other markup language isn't supported.
@@ -61,6 +64,7 @@ template:
     {{trimSuffix "\n" .Stdout}}
 -->
 - [Embed Command Result](examples/10_command.md)
+- [Running Commands In Containers](examples/15_container.md)
 - [Embed Local Files](examples/20_file.md)
 - [Fetch Files Via HTTP](examples/30_http.md)
 - [Fetch files by GitHub Contents API](examples/40_github_content.md)
