@@ -232,7 +232,7 @@ func (b *BlockInput) GetCodeBlock() bool {
 		return *b.CodeBlock
 	}
 	if b.Command != nil {
-		return true
+		return !b.Command.HideCommand
 	}
 	return false
 }
@@ -343,6 +343,7 @@ type Command struct {
 	IgnoreFail      bool              `json:"ignore_fail,omitempty" yaml:"ignore_fail" jsonschema_description:"If this is true, docfresh does't fail even if command fails"`
 	EmbedScript     bool              `json:"embed_script,omitempty" yaml:"embed_script" jsonschema_description:"If this is true, the content of script is embedded into documents."`
 	Quiet           bool              `json:"quiet,omitempty" jsonschema_description:"If this is true, the command output isn't outputted to documents."`
+	HideCommand     bool              `json:"hide_command,omitempty" yaml:"hide_command" jsonschema_description:"If this is true, the command isn't outputted to documents."`
 }
 
 type PostCommand struct {
@@ -401,5 +402,6 @@ type TemplateInput struct {
 	EmbedScript       bool
 	CodeBlock         bool
 	Quiet             bool
+	HideCommand       bool
 	DetailsTagSummary string
 }

@@ -1,3 +1,4 @@
+{{if not .HideCommand -}}
 {{if .Command -}}
 {{codeFence .Command}}{{.CommandLanguage | default "sh"}}
 {{trimSuffix "\n" .Command}}
@@ -12,6 +13,7 @@
 {{codeFence .Script}}
 {{- end}}
 
+{{end -}}
 {{if not .Quiet -}}
 {{if .DetailsTagSummary -}}
 <details>
@@ -28,8 +30,10 @@
 </details>
 {{- else -}}
 {{if .CodeBlock -}}
+{{if not .HideCommand -}}
 Output:
 
+{{end -}}
 {{codeFence .CombinedOutput}}{{.OutputLanguage}}
 {{trimSuffix "\n" .CombinedOutput}}
 {{codeFence .CombinedOutput}}

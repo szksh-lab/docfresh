@@ -59,9 +59,7 @@ Please see not only rendered markdowns but also raw source code because HTML com
 <!-- docfresh begin
 command:
   command: bash examples/file/create-index.sh
-template:
-  content: |
-    {{trimSuffix "\n" .Stdout}}
+  hide_command: true
 -->
 - [Embed Command Result](examples/10_command.md)
 - [Running Commands In Containers](examples/15_container.md)
