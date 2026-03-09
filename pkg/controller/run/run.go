@@ -3,6 +3,7 @@ package run
 import (
 	"context"
 	_ "embed"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -18,7 +19,8 @@ import (
 var commandTemplate string
 
 type Input struct {
-	Files map[string]struct{}
+	Files             map[string]struct{}
+	AllowUnknownField bool
 }
 
 type Templates struct {
@@ -39,21 +41,31 @@ func (c *Controller) Run(ctx context.Context, logger *slog.Logger, input *Input)
 	}
 	for file := range input.Files {
 		logger := logger.With("file", file)
-		if err := c.run(ctx, logger, tpls, file); err != nil {
+		if err := c.run(ctx, logger, tpls, file, input.AllowUnknownField); err != nil {
 			return slogerr.With(err, "file", file) //nolint:wrapcheck
 		}
 	}
 	return nil
 }
 
-func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templates, file string) (gErr error) { //nolint:cyclop,funlen
+func (c *Controller) run(ctx context.Context, logger *slog.Logger, tpls *Templates, file string, allowUnknownField bool) (gErr error) { //nolint:cyclop,funlen,gocognit
 	b, err := afero.ReadFile(c.fs, file)
 	if err != nil {
 		return fmt.Errorf("read a file: %w", err)
 	}
 	bs := string(b)
-	blocks, err := ParseFile(string(b), nil)
+	var parseOpt *ParseOption
+	if !allowUnknownField {
+		parseOpt = &ParseOption{DisallowUnknownField: true}
+	}
+	blocks, err := ParseFile(string(b), parseOpt)
 	if err != nil {
+		var yamlErr *YAMLError
+		if errors.As(err, &yamlErr) {
+			fmt.Fprintf(c.stderr, "%s:%d\n", file, yamlErr.DirectiveLine)
+			fmt.Fprintln(c.stderr, yamlErr)
+			return errors.New("parse file failed")
+		}
 		return fmt.Errorf("parse a file: %w", err)
 	}
 
