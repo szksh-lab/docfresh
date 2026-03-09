@@ -15,6 +15,7 @@ docfresh validate 90_validate.md
 Output:
 
 ```
+90_validate.md:3
 [1:1] unknown field "unknown_field"
 >  1 | unknown_field: true
        ^
