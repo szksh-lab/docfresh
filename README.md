@@ -50,6 +50,11 @@ docfresh version v3.0.0-local
 
 2. Create a document `hello.md`
 
+<!-- docfresh begin
+file:
+  path: examples/file/hello.md
+code_block: true
+-->
 ```md
 # Embed the output of commands into a document
 
@@ -59,12 +64,31 @@ command:
 -->
 <!-- docfresh end -->
 ```
+<!-- docfresh end -->
 
 The HTML comments `<!-- docfresh begin -->` and `<!-- docfresh end -->` are docfresh's directives to define the action and the output to be embedded into the document.
 The action result is embedded between the begin and end directives.
 They are HTML comments, so they are not visible in the rendered markdown.
 
-3. Run `docfresh run hello.md`.
+3. Validate document by `docfresh run hello.md`.
+
+<!-- docfresh begin
+command:
+  command: docfresh validate hello.md
+  dir: examples/file
+-->
+```sh
+docfresh validate hello.md
+```
+
+Output:
+
+```
+hello.md: valid
+```
+<!-- docfresh end -->
+
+4. Update document by `docfresh run hello.md`.
 
 ```sh
 docfresh run hello.md
