@@ -3,9 +3,8 @@
 <!-- docfresh begin
 command:
   command: bash file/create-index.sh
-template:
-  content: |
-    {{trimSuffix "\n" .Stdout}}
+  hide_command: true
+code_block: false
 -->
 - [Embed Command Result](10_command.md)
 - [Running Commands In Containers](15_container.md)
