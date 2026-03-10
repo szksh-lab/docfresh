@@ -338,21 +338,51 @@ docfresh supports the shell completion.
 
 .bashrc
 
+<!-- docfresh begin
+command:
+  hide_output: true
+  command: |
+    if command -v docfresh &> /dev/null; then
+      eval "$(docfresh completion bash)"
+    fi
+-->
 ```sh
 if command -v docfresh &> /dev/null; then
-    eval "$(docfresh completion bash)"
+  eval "$(docfresh completion bash)"
 fi
 ```
+
+<!-- docfresh end -->
 
 .zshrc
 
+<!-- docfresh begin
+command:
+  hide_output: true
+  command: |
+    if command -v docfresh &> /dev/null; then
+      source <(docfresh completion zsh)
+    fi
+-->
 ```sh
 if command -v docfresh &> /dev/null; then
-    source <(docfresh completion zsh)
+  source <(docfresh completion zsh)
 fi
 ```
 
+<!-- docfresh end -->
+
 https://fishshell.com/docs/current/completions.html#where-to-put-completions
+
+<!-- docfresh begin
+command:
+  hide_command: true
+  hide_output: true
+  command: |
+    docfresh completion fish
+-->
+
+<!-- docfresh end -->
 
 ```sh
 docfresh completion fish > ~/.config/fish/completions/docfresh.fish
