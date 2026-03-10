@@ -329,3 +329,31 @@ command:
 ```
 
 Please see [JSON Schema](json-schema/comment.json) and [Examples](#examples).
+
+## Shell Completion
+
+The commands `docfresh completion <SHELL>` outputs shell completion code.
+By sourcing the output of `docfresh completion <SHELL>` in .bashrc, .zshrc, or ~/.config/fish/completions/docfresh.fish,
+docfresh supports the shell completion.
+
+.bashrc
+
+```sh
+if command -v docfresh &> /dev/null; then
+    eval "$(docfresh completion bash)"
+fi
+```
+
+.zshrc
+
+```sh
+if command -v docfresh &> /dev/null; then
+    source <(docfresh completion zsh)
+fi
+```
+
+https://fishshell.com/docs/current/completions.html#where-to-put-completions
+
+```sh
+docfresh completion fish > ~/.config/fish/completions/docfresh.fish
+```
