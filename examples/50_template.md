@@ -22,6 +22,29 @@ Hello
 ```
 <!-- docfresh end -->
 
+## Template Engine
+
+docfresh uses Go's [text/template](https://pkg.go.dev/text/template) and [sprig](https://masterminds.github.io/sprig/).
+Note that the following sprig functions aren't available due to security concerns:
+
+- env
+- expandenv
+- getHostByName
+
+### Available Variables In Templates
+
+command:
+
+- Command
+- Stdout
+- Stderr
+- CombinedOutput
+- ExitCode
+
+http, file:
+
+- Content
+
 ## template.path
 
 <!-- docfresh begin
