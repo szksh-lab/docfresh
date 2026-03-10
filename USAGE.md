@@ -14,7 +14,7 @@ USAGE:
    docfresh [global options] [command [command options]]
 
 VERSION:
-   v3.0.0-local
+   0.2.0
 
 COMMANDS:
    run         Update documents
