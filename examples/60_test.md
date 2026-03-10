@@ -1,5 +1,19 @@
 # Test Command Results And Fetched File Contents
 
+`test` is evaluated using [Expr](https://expr-lang.org/).
+Clear, precise error messages with position indicators to help debug expressions quickly.
+
+```
++ echo hello
+hello
+[ERROR] compile an expression
+literal not terminated (1:23)
+ | Stdout contains "hello
+ | ......................^+ echo post
+```
+
+[About the language, please see the document of Expr.](https://expr-lang.org/docs/language-definition)
+
 ## Test Command
 
 <!-- docfresh begin
@@ -37,3 +51,7 @@ file:
 -->
 This is read from foo.md
 <!-- docfresh end -->
+
+## Available Variables In Expressions
+
+Available Variables are same with available variables in templates.
