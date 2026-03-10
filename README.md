@@ -23,31 +23,151 @@ Other markup language isn't supported.
 ## Getting Started
 
 1. [Install docfresh](INSTALL.md)
+2. [Run commands and embed the output into a document](#2-run-commands-and-embed-the-output-into-a-document)
+3. [Embed Local Files](#3-embed-local-files)
+4. [Embed Remote Files](#4-embed-remote-files)
 
-```sh
-: Check version
-docfresh -v
-```
+### 1. Install docfresh
 
-2. Create a document `date.md`
-
-```md
-# Embed the output of date command into a document
+[Please see INSTALL.md.](INSTALL.md)
 
 <!-- docfresh begin
 command:
-  command: date "+%Y-%m-%d %H:%M:%S"
+  command: docfresh -v
+-->
+```sh
+docfresh -v
+```
+
+Output:
+
+```
+docfresh version v3.0.0-local
+```
+<!-- docfresh end -->
+
+### 2. Run commands and embed the output into a document
+
+2. Create a document `hello.md`
+
+```md
+# Embed the output of commands into a document
+
+<!-- docfresh begin
+command:
+  command: echo hello
 -->
 <!-- docfresh end -->
 ```
 
-3. Run `docfresh run date.md` to update date.md.
+The HTML comments `<!-- docfresh begin -->` and `<!-- docfresh end -->` are docfresh's directives to define the action and the output to be embedded into the document.
+The action result is embedded between the begin and end directives.
+They are HTML comments, so they are not visible in the rendered markdown.
+
+3. Run `docfresh run hello.md`.
 
 ```sh
-docfresh run date.md
+docfresh run hello.md
 ```
 
-Then the date command and the result is embedded into the document.
+Then `echo hello` is executed and the result is embedded into hello.md.
+You can confirm commands in the document work properly and the document is updated.
+By running `docfresh run` periodically, you can detect issues quickly and keep the document up-to-date.
+
+````md
+<!-- docfresh begin
+command:
+  command: echo hello
+-->
+```sh
+echo hello
+```
+
+Output:
+
+```
+hello
+```
+<!-- docfresh end -->
+````
+
+<!-- docfresh begin
+command:
+  command: echo hello
+-->
+```sh
+echo hello
+```
+
+Output:
+
+```
+hello
+```
+<!-- docfresh end -->
+
+[You can also run commands in containers, which improves the security and consistency (portability).](examples/15_container.md)
+
+### 3. Embed Local Files
+
+You can embed local files into the document.
+You can manage code snippets in documents separately, which improves the maintainability of code snippets.
+You can run linter and formatter on code snippets, and edit code snippets by your editor.
+
+For example, embedding [_typos.toml](_typos.toml).
+
+```md
+<!-- docfresh begin
+file:
+  path: _typos.toml
+code_block: true
+-->
+<!-- docfresh end -->
+```
+
+<!-- docfresh begin
+file:
+  path: _typos.toml
+code_block: true
+-->
+```toml
+[default.extend-words]
+ERRO = "ERRO"
+intoto = "intoto"
+typ = "typ"
+```
+<!-- docfresh end -->
+
+### 4. Embed Remote Files
+
+You can embed remote files into the document.
+You can reuse documents across repositories.
+For example, you can reuse CONTRIBUTING.md, AGENTS.md, CLAUDE.md, and so on.
+You can reuse Go's template files, which can change contents dynamically.
+
+```md
+<!-- docfresh begin
+code_block: true
+http:
+  url: https://jsonplaceholder.typicode.com/todos/1
+-->
+<!-- docfresh end -->
+```
+
+<!-- docfresh begin
+code_block: true
+http:
+  url: https://jsonplaceholder.typicode.com/todos/1
+-->
+```json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+```
+<!-- docfresh end -->
 
 ## Examples
 
@@ -70,7 +190,7 @@ command:
 - [Test Command Results And Fetched File Contents](examples/60_test.md)
 - [Post (Cleanup)](examples/70_post.md)
 - [Transform command outputs and file contents before rendering](examples/80_transform.md)
-- [validate command](examples/90_validate.md)
+- [Validate Files](examples/90_validate.md)
 <!-- docfresh end -->
 
 ## Motivation
