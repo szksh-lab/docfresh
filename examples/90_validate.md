@@ -1,4 +1,4 @@
-# validate command
+# Validate Files
 
 <!-- docfresh begin
 command:

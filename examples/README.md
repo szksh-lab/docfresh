@@ -16,5 +16,5 @@ template:
 - [Test Command Results And Fetched File Contents](60_test.md)
 - [Post (Cleanup)](70_post.md)
 - [Transform command outputs and file contents before rendering](80_transform.md)
-- [validate command](90_validate.md)
+- [Validate Files](90_validate.md)
 <!-- docfresh end -->
