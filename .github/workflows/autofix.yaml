@@ -13,7 +13,7 @@ jobs:
           persist-credentials: false
       - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
         with:
-          aqua_version: v2.57.1
+          aqua_version: v2.57.2
       - run: docfresh -v
         env:
           AQUA_GITHUB_TOKEN: ${{github.token}}
@@ -21,4 +21,4 @@ jobs:
       - uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
       - uses: suzuki-shunsuke/go-autofix-action@2a159c8f21af356c29ee26d76821b5c15956c1d6 # v0.1.11
         with:
-          aqua_version: v2.57.1
+          aqua_version: v2.57.2
